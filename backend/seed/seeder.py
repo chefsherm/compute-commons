@@ -208,16 +208,6 @@ def seed_contributions(contributor_ids):
         store.put("contributions", contrib_id, contrib.model_dump())
         contribution_ids.append(contrib_id)
 
-        # Mirror submission in Firestore if complete
-        if status == "complete" and not contrib.acted_on:
-            store.put("submissions", contrib_id, {
-                "id": contrib_id,
-                "contributor_id": cid,
-                "status": status,
-                "model": "claude-3-5-sonnet-20241022",
-                "timestamp": contrib.completed_at or contrib.submitted_at
-            })
-
         # Update contributor types used
         c = store.get("contributors", cid)
         types = set(c.get("contribution_types_used", []))

@@ -103,6 +103,54 @@ def root():
 
 @app.get("/health")
 async def health():
-    """Health check — used by Cloud Run and load balancers."""
-    gcp = bool(os.getenv("GOOGLE_CLOUD_PROJECT"))
-    return {"status": "ok", "firestore": gcp, "env": os.getenv("ENV", "development")}
+    """
+    Health check used by Cloud Run liveness + readiness probes.
+
+    Returns 200 {"status": "ok"}   when everything is reachable.
+    Returns 503 {"status": "degraded"} if Firestore is unreachable.
+
+    Always responds within ~3 seconds — the Firestore ping has a hard timeout.
+    Cloud Run will restart the container if this returns non-2xx.
+    """
+    import asyncio
+    from time import perf_counter
+    from typing import Optional as Opt
+
+    env = os.getenv("ENV", "development")
+    project = os.getenv("GOOGLE_CLOUD_PROJECT", "")
+    firestore_ok: Opt[bool] = None
+    firestore_latency_ms: Opt[float] = None
+
+    if project:
+        try:
+            from shared.database import get_db
+            db = await get_db()
+            t0 = perf_counter()
+            # Lightweight probe: fetch a known-small doc (leaderboard snapshot)
+            await asyncio.wait_for(
+                db.get("leaderboard", "top50"),
+                timeout=3.0,
+            )
+            firestore_latency_ms = round((perf_counter() - t0) * 1000, 1)
+            firestore_ok = True
+        except asyncio.TimeoutError:
+            firestore_ok = False
+            firestore_latency_ms = 3000.0
+        except Exception as exc:
+            firestore_ok = False
+            firestore_latency_ms = None
+
+    degraded = firestore_ok is False
+    from fastapi.responses import JSONResponse
+    body = {
+        "status": "degraded" if degraded else "ok",
+        "env": env,
+        "project": project or "not-set",
+        "firestore": {
+            "reachable": firestore_ok,
+            "latency_ms": firestore_latency_ms,
+        } if project else "not-configured",
+        "version": "2.0.0",
+    }
+    return JSONResponse(content=body, status_code=503 if degraded else 200)
+

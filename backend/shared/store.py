@@ -30,6 +30,8 @@ _store: Dict[str, Dict[str, Any]] = {
     "compliance_records": {},
     "trust_scores": {},
     "quarterly_stats": {},
+    "leaderboard": {},
+    "leaderboard_snapshots": {},
 }
 
 
