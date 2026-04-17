@@ -3,7 +3,11 @@ CATS — Main FastAPI Application (Phase 1 + Phase 2)
 Mounts all service routers. Auto-seeds synthetic data on startup.
 """
 import sys, os
+from dotenv import load_dotenv
+
 sys.path.insert(0, os.path.dirname(__file__))
+
+load_dotenv()
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -30,7 +34,11 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "*"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://computecommons.io",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
