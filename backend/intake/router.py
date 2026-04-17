@@ -178,6 +178,15 @@ def submit_contribution(req: SubmitContributionRequest):
     )
     store.put("contributions", contrib_id, contrib.model_dump())
 
+    # Mirror submission in Firestore
+    store.put("submissions", contrib_id, {
+        "id": contrib_id,
+        "contributor_id": req.contributor_id,
+        "status": status,
+        "model": "generic-v1",
+        "timestamp": contrib.submitted_at
+    })
+
     # Update contributor's last submission time and type history
     contributor["last_submission_at"] = datetime.utcnow().isoformat() + "Z"
     types = set(contributor.get("contribution_types_used", []))

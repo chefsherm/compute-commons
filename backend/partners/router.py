@@ -52,6 +52,15 @@ def mark_acted_on(contribution_id: str, req: ActedOnRequest):
     c["acted_on_note"] = req.note
     store.put("contributions", contribution_id, c)
 
+    # Update mirrored submission in Firestore
+    store.put("submissions", contribution_id, {
+        "id": contribution_id,
+        "contributor_id": contributor_id,
+        "status": "complete_acted_on",
+        "model": "generic-v1",
+        "timestamp": c.get("submitted_at")
+    })
+
     # Bonus credits
     bonus_points = ACTED_ON_BONUS_CREDITS
     bonus_credit = round(bonus_points * 0.01, 2)  # same EXCHANGE_RATE_PER_POINT

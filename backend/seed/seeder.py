@@ -208,6 +208,16 @@ def seed_contributions(contributor_ids):
         store.put("contributions", contrib_id, contrib.model_dump())
         contribution_ids.append(contrib_id)
 
+        # Mirror submission in Firestore if complete
+        if status == "complete" and not contrib.acted_on:
+            store.put("submissions", contrib_id, {
+                "id": contrib_id,
+                "contributor_id": cid,
+                "status": status,
+                "model": "claude-3-5-sonnet-20241022",
+                "timestamp": contrib.completed_at or contrib.submitted_at
+            })
+
         # Update contributor types used
         c = store.get("contributors", cid)
         types = set(c.get("contribution_types_used", []))
@@ -580,6 +590,24 @@ def seed_trust_scores(contributor_ids):
         store.put("trust_scores", cid, {"contributor_id": cid, **scores})
         contributor["trust_score"] = scores["total"]
         store.put("contributors", cid, contributor)
+
+    # Update leaderboard in Firestore
+    contributors = store.list_all("contributors")
+    contributors.sort(key=lambda x: x["points"], reverse=True)
+    for i, c in enumerate(contributors[:50]):
+        entry = {
+            "rank": i + 1,
+            "contributor_id": c["id"],
+            "handle": c["handle"],
+            "tier": c["tier"],
+            "points": c["points"],
+            "credits_balance": c["credits_balance"],
+            "accuracy_score": c["accuracy_score"],
+            "trust_score": c.get("trust_score", 0),
+            "domains": c.get("domains", []),
+            "domain": c.get("domains")[0] if c.get("domains") else None,
+        }
+        store.put("leaderboard", c["id"], entry)
 
 
 # ─── QUARTERLY STATS ──────────────────────────────────────────────────────────

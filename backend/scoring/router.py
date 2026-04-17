@@ -164,6 +164,20 @@ def award_score(req: AwardRequest):
     contributor["decay_status"] = "active"  # reset decay clock
     store.put("contributors", c["contributor_id"], contributor)
 
+    # Mirror submission in Firestore
+    store.put("submissions", req.contribution_id, {
+        "id": req.contribution_id,
+        "contributor_id": c["contributor_id"],
+        "status": "complete",
+        "model": "generic-v1",
+        "timestamp": c.get("submitted_at")
+    })
+
+    # Update leaderboard in Firestore (simplified: update every time someone's points change)
+    top_50 = get_leaderboard(limit=50)
+    for entry in top_50:
+        store.put("leaderboard", entry["contributor_id"], entry)
+
     # Create transaction
     txn_id = f"txn_{uuid.uuid4().hex[:8]}"
     txn = {
@@ -276,6 +290,7 @@ def get_leaderboard(limit: int = 50, tier: Optional[str] = None, domain: Optiona
             "accuracy_score": c["accuracy_score"],
             "trust_score": c["trust_score"],
             "domains": c["domains"],
+            "domain": c["domains"][0] if c.get("domains") else None,
         })
     return ranked
 
