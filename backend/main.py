@@ -1,7 +1,3 @@
-"""
-CATS — Main FastAPI Application (Phase 1 + Phase 2)
-Mounts all service routers. Auto-seeds synthetic data on startup.
-"""
 import sys, os
 from dotenv import load_dotenv
 
@@ -32,13 +28,20 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
+# CORS — always include computecommons.io; extend via ALLOWED_ORIGINS env var
+_default_origins = [
+    "https://computecommons.io",
+    "https://www.computecommons.io",
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3000",
+]
+_extra = os.getenv("ALLOWED_ORIGINS", "")
+_allowed_origins = _default_origins + [o.strip() for o in _extra.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "https://computecommons.io",
-    ],
+    allow_origins=_allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
