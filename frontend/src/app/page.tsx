@@ -26,7 +26,7 @@ export default function HomePage() {
   useEffect(() => {
     fetch('/api/meta/brand').then(r => r.json()).then(setBrand).catch(() => {})
     fetch('/api/meta/partners').then(r => r.json()).then(setPartners).catch(() => {})
-    fetch('/api/scoring/stats').then(r => r.json()).then(d => setStats({
+    fetch('/api/stats').then(r => r.json()).then(d => setStats({
       contributors: 25,
       contributions: d.total_contributions || 37,
       points: d.total_points_issued || 0,
