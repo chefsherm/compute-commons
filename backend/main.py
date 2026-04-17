@@ -19,6 +19,7 @@ from progression.router import router as progression_router
 from partners.router import router as partners_router
 
 from seed.seeder import seed_all
+from shared.database import init_db
 
 app = FastAPI(
     title="Compute Commons",
@@ -62,7 +63,19 @@ app.include_router(partners_router, prefix="/api/partners", tags=["Partners"])
 @app.on_event("startup")
 async def startup():
     print("🚀 Compute Commons starting up...")
-    seed_all()
+
+    # Initialize Firestore async client (production + staging)
+    # Skipped gracefully in local dev if GOOGLE_CLOUD_PROJECT is not set
+    if os.getenv("GOOGLE_CLOUD_PROJECT"):
+        try:
+            init_db()
+            print("🔥 Firestore connected")
+        except Exception as e:
+            print(f"⚠️  Firestore init failed (falling back to in-memory): {e}")
+    else:
+        print("⚠️  GOOGLE_CLOUD_PROJECT not set — using in-memory store")
+        seed_all()
+
     print("🌐 API ready at http://localhost:8000")
     print("📖 Docs at http://localhost:8000/docs")
 
@@ -89,5 +102,7 @@ def root():
 
 
 @app.get("/health")
-def health():
-    return {"status": "ok"}
+async def health():
+    """Health check — used by Cloud Run and load balancers."""
+    gcp = bool(os.getenv("GOOGLE_CLOUD_PROJECT"))
+    return {"status": "ok", "firestore": gcp, "env": os.getenv("ENV", "development")}
