@@ -1,370 +1,473 @@
-# Compute Commons · Design System
+# Compute Commons · Material Design 3 Design System
 
-**Theme:** High-Trust Premium SaaS — Stripe × Linear × Vercel  
-**Mode:** Light-first. Pure white cards on a slate-50 shell.  
-**Goal:** Aspirational for expert contributors. Rigorously professional for enterprise AI buyers.
+**Theme:** Material Design 3 — Tonal Palettes · Elevation · State Layers · M3 Type Scale  
+**Context:** Expert AI talent network and evaluation platform  
+**Aesthetic goal:** Aspirational for contributors, rigorously professional for enterprise AI buyers
+
+> **Files:**
+> - `tailwind.config.js` — tokens registered as Tailwind utilities
+> - `src/app/globals.css` — CSS variables + `@layer components` primitives
+> - This document — canonical reference for all future component work
 
 ---
 
-## 1 · Color Palette
+## 1 · The M3 Color System
 
-### Backgrounds
-| Token | Value | Tailwind | Use |
+M3 uses **color roles** — not raw hex values. Every color has an **on-** counterpart for text rendered on top of it, and a **container** pair for softer usage.
+
+### Primary Role (Indigo — Brand/Action)
+| Role | CSS var | Hex | Use |
 |---|---|---|---|
-| App shell | `#f8fafc` | `bg-slate-50` | Page background, sidebars |
-| Card surface | `#ffffff` | `bg-white` | Cards, modals, dropdowns |
-| Subtle fill | `#f1f5f9` | `bg-slate-100` | Table rows, input bg, inner panels |
+| Primary | `--md-primary` | `#4f46e5` | Filled buttons, active states, key highlights |
+| On Primary | `--md-on-primary` | `#ffffff` | Text/icons inside Primary-colored elements |
+| Primary Container | `--md-primary-container` | `#e0e7ff` | Chips, tinted card surfaces, selected state bg |
+| On Primary Container | `--md-on-primary-container` | `#1e1b4b` | Text inside Primary Container |
 
-### Text
-| Role | Tailwind | Use |
-|---|---|---|
-| Primary heading | `text-slate-900` | H1, H2, H3 — always `tracking-tight` |
-| Body / secondary | `text-slate-600` | Paragraphs, descriptions |
-| Muted | `text-slate-400` | Placeholders, hints, timestamps |
-| Disabled | `text-slate-300` | Disabled states |
-
-### Brand (Indigo)
-| State | Tailwind | CSS var |
-|---|---|---|
-| Default | `bg-indigo-600` / `text-indigo-600` | `--cc-brand` |
-| Hover | `bg-indigo-700` | `--cc-brand-hover` |
-| Tinted bg | `bg-indigo-50` / `text-indigo-700` | `--cc-brand-light` |
-| Focus ring | `ring-indigo-500` | `--cc-brand-ring` |
-
-### Semantic Colors
-| Meaning | Tailwind | CSS var | Use |
+### Secondary Role (Violet — Supporting)
+| Role | CSS var | Hex | Use |
 |---|---|---|---|
-| **Earned / Approved** | `text-emerald-600` + `bg-emerald-50` | `--cc-earned` | Credits, complete status, trust score |
-| **Staked / Pending** | `text-amber-600` + `bg-amber-50` | `--cc-staked` | Pending review, staked credits |
-| **Flagged / Rejected** | `text-rose-600` + `bg-rose-50` | `--cc-flagged` | Error states, abuse flags, rejections |
+| Secondary | `--md-secondary` | `#7c3aed` | FABs, secondary emphasis |
+| Secondary Container | `--md-secondary-container` | `#ede9fe` | Active nav items, tonal buttons |
+| On Secondary Container | `--md-on-secondary-container` | `#2e1065` | Text inside Secondary Container |
 
-> **Rule:** Never use raw colors on text. Always pair `text-{semantic}-600` with `bg-{semantic}-50` for badges. Use `text-{semantic}-700` on colored backgrounds.
-
----
-
-## 2 · Typography
-
-**Font stack:**
-- Sans: `Inter` → `system-ui` → `-apple-system`
-- Mono: `JetBrains Mono` → `Fira Code` → `ui-monospace`
-
-### Scale
-| Class | Size | Weight | Use |
+### Tertiary Role (Sky — Accent)
+| Role | CSS var | Hex | Use |
 |---|---|---|---|
-| `text-4xl font-bold tracking-tightest` | 36px | 700 | Page heroes, stat callouts |
-| `text-2xl font-semibold tracking-tight` | 24px | 600 | H2 section titles |
-| `text-xl font-semibold tracking-tight` | 20px | 600 | Card titles, pane headers |
-| `text-lg font-semibold` | 18px | 600 | H3 subsections |
-| `text-sm` | 14px | 400 | Body copy, table cells |
-| `text-xs font-semibold uppercase tracking-widest` | 12px | 600 | Section labels, column headers |
-| `text-2xs` (custom) | 10.4px | — | Fine print, supplemental hints |
+| Tertiary | `--md-tertiary` | `#0284c7` | Charts, progress, accent callouts |
+| Tertiary Container | `--md-tertiary-container` | `#e0f2fe` | Soft highlight backgrounds |
 
-### Rules
-- Apply `tracking-tight` (`-0.025em`) to **all** H1–H3 headings.
-- Apply `tabular-nums` to all financial numbers and scores for alignment.
-- Use `font-mono` for AI prompts, scores, IDs, and credit amounts.
-- Use `text-balance` on marketing/hero headlines for clean line breaks.
+### Semantic Roles
+| Meaning | CSS var | Container var | Use |
+|---|---|---|---|
+| **Earned / Approved** | `--md-earned` `#059669` | `--md-earned-container` `#d1fae5` | Credits, complete status |
+| **Staked / Pending** | `--md-staked` `#d97706` | `--md-staked-container` `#fef3c7` | Pending review, staked amounts |
+| **Error / Flagged** | `--md-error` `#b91c1c` | `--md-error-container` `#fee2e2` | Rejected, abused, flagged |
+
+### Surface Roles (Backgrounds)
+M3 replaces plain `bg-white` + `bg-gray` with a **5-level container system**, all slightly tinted with the primary hue.
+
+| Level | CSS var | Alpha tint | Use |
+|---|---|---|---|
+| `surface` | `--md-surface` | — | App shell / page bg (`#f8f7ff`) |
+| `surface-container-lowest` | `--md-surface-container-lowest` | 0% | Cards at highest elevation |
+| `surface-container-low` | `--md-surface-container-low` | 5% | Sidebars, navs, resting cards |
+| `surface-container` | `--md-surface-container` | 8% | Standard card surface |
+| `surface-container-high` | `--md-surface-container-high` | 11% | Filled inputs bg, elevated sections |
+| `surface-container-highest` | `--md-surface-container-highest` | 14% | Overlapping panels, tooltips |
+
+### On-Surface (Text)
+| Role | CSS var | Hex | Use |
+|---|---|---|---|
+| On Surface | `--md-on-surface` | `#1c1b20` | All headings and primary body text |
+| On Surface Variant | `--md-on-surface-variant` | `#47464f` | Secondary text, placeholder, hints |
+
+### Outline
+| Role | CSS var | Hex | Use |
+|---|---|---|---|
+| Outline | `--md-outline` | `#787680` | Input borders (unfocused), dividers |
+| Outline Variant | `--md-outline-variant` | `#cac4d0` | Subtle dividers, inactive chip borders |
+
+> **Rule:** NEVER use raw Tailwind colors like `text-gray-600` directly. Always reference the role. Compose using CSS variables or the semantic classes below.
 
 ---
 
-## 3 · Spacing
+## 2 · M3 Elevation
 
-**Philosophy:** Let data breathe. Dense where needed, relaxed in presentation.
+M3 elevation has **two mechanisms** — shadow + primary-tinted surface overlay. Both must be applied together.
 
-| Context | Padding | Gap |
-|---|---|---|
-| Standard card | `p-6` | `gap-4` between content sections |
-| Hero / stat card | `p-8` | `gap-6` |
-| Dense list row | `px-4 py-3` | — |
-| Form fields | `px-3 py-2` | `gap-3` between fields |
-| Sidebar nav | `px-3 py-2` per item | `gap-1` between items |
-| Page layout sections | — | `gap-6` |
+| Level | Shadow token | Tint level | Component examples |
+|---|---|---|---|
+| 0 | `shadow-elev-0` / none | 0% | Flat surfaces, text buttons |
+| 1 | `shadow-elev-1` / `shadow-sm` | 5% | Cards at rest, search bars |
+| 2 | `shadow-elev-2` / `shadow-md` | 8% | Nav drawers, floating elements |
+| 3 | `shadow-elev-3` / `shadow-lg` | 11% | FABs, dialogs, modals |
+| 4 | `shadow-elev-4` | 12% | Navigation bar (scrolled) |
+| 5 | `shadow-elev-5` | 14% | Top app bar (scrolled) |
 
----
-
-## 4 · Component DNA
-
-### Cards
+**Applying tint + shadow in Tailwind:**
 ```tsx
-// Standard card
-<div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+// Level 1 card (rest state)
+<div className="shadow-elev-1 bg-surface-container-low rounded-md">
 
-// Or use the CSS class:
-<div className="cc-card">
-
-// Interactive — lifts on hover
-<div className="cc-card cc-card-hover">
-
-// Hero / stat card (has indigo top stripe)
-<div className="cc-card-hero">
+// Level 2 (on hover or navigation)
+<div className="shadow-elev-2 bg-surface-container rounded-md">
 ```
 
-**Rules:**
-- Border: `border-slate-200` — never darker unless active/focused
-- Shadow: `shadow-sm` only — never heavier
-- Radius: `rounded-xl` (14px) standard, `rounded-2xl` for hero sections
-
----
-
-### Buttons
+**Using the CSS component class (recommended):**
 ```tsx
-// Primary — brand action
-<button className="cc-btn-primary">Request Intro</button>
-
-// Tailwind compose (equivalent):
-<button className="bg-indigo-600 text-white font-medium text-sm rounded-lg
-                   px-4 py-2 shadow-sm border border-indigo-600
-                   hover:bg-indigo-700 transition-colors">
-
-// Secondary
-<button className="cc-btn-secondary">Cancel</button>
-
-// Tailwind compose:
-<button className="bg-white text-slate-700 border border-slate-300 font-medium
-                   text-sm rounded-lg px-4 py-2 hover:bg-slate-50
-                   transition-colors shadow-sm">
-
-// Destructive
-<button className="cc-btn-danger">Remove</button>
-
-// Confirmed state (after "Request Intro")
-<button className="bg-emerald-50 text-emerald-700 border border-emerald-200
-                   rounded-lg px-4 py-2 font-medium text-sm cursor-default
-                   inline-flex items-center gap-2">
-  <CheckCircle2 className="w-4 h-4" /> Intro Requested
-</button>
+// Handles both shadow AND correct surface tint
+<div className="md-card">...</div>
+<div className="md-card-xl">...</div>   // Extra Large shape, Level 2
 ```
 
 ---
 
-### Badges & Status Pills
+## 3 · M3 Shape Scale
+
+M3 uses named shape tokens — not arbitrary `rounded-*` values.
+
+| M3 Token | Radius | Tailwind | Use |
+|---|---|---|---|
+| Extra Small | 4px | `rounded-xs` | Menus, tooltips, snackbars |
+| Small | 8px | `rounded-sm` | Chips, text field corners |
+| Medium | 12px | `rounded-md` | Cards, dialogs |
+| Large | 16px | `rounded-lg` | Navigation drawers, side sheets |
+| Extra Large | 28px | `rounded-xl` | Large FABs, prominent cards |
+| Full | 9999px | `rounded-full` | **All buttons**, pills, FABs, chips |
+
+> **Rule:** Buttons ALWAYS use `rounded-full`. Cards use `rounded-md` (12px) or `rounded-xl` (28px) for hero/xl cards. NEVER use `rounded-xl` on buttons.
+
+---
+
+## 4 · M3 Typography Scale
+
+Inter (or Roboto) is the platform font. All sizes mapped to M3 spec in `tailwind.config.js`.
+
+| Role | Class | Size | Weight | Use |
+|---|---|---|---|---|
+| Display Large | `text-display-lg` | 57sp / 3.56rem | 400 | Marketing heroes (rare) |
+| Display Medium | `text-display-md` | 45sp / 2.81rem | 400 | Page-level stat callouts |
+| Display Small | `text-display-sm` | 36sp / 2.25rem | 400 | Section hero numbers |
+| Headline Large | `text-headline-lg` | 32sp / 2rem | 400 | Page titles (H2) |
+| Headline Medium | `text-headline-md` | 28sp / 1.75rem | 400 | Section headings |
+| Headline Small | `text-headline-sm` | 24sp / 1.5rem | 400 | Card titles (H3) |
+| Title Large | `text-title-lg` | 22sp / 1.375rem | 500 | Pane headers, dialog titles |
+| Title Medium | `text-title-md` | 16sp / 1rem | 500 | Prominent labels |
+| Title Small | `text-title-sm` | 14sp / 0.875rem | 500 | Column headers |
+| Body Large | `text-body-lg` | 16sp / 1rem | 400 | Default body text |
+| Body Medium | `text-body-md` | 14sp / 0.875rem | 400 | Table cells, secondary body |
+| Body Small | `text-body-sm` | 12sp / 0.75rem | 400 | Captions, fine print |
+| Label Large | `text-label-lg` | 14sp / 0.875rem | 500 | **Button text**, prominent labels |
+| Label Medium | `text-label-md` | 12sp / 0.75rem | 500 | **Chip text**, overlines, nav labels |
+| Label Small | `text-label-sm` | 11sp / 0.6875rem | 500 | Badge text, annotation |
+
+> **Rules:**
+> - Button text → always `text-label-lg font-medium`
+> - Table column headers → `text-label-md font-medium uppercase`
+> - Section labels → `cc-section-label` class (Label Small, uppercase, On Surface Variant)
+> - Monospace numbers → `font-mono tabular-nums` on top of scale class
+
+---
+
+## 5 · State Layers
+
+M3 interaction states are an **overlay of the "on-" color** at a defined opacity — NOT background-color changes of the component itself. This is enforced via `::before` pseudo-elements in all interactive components.
+
+| State | Opacity | Elements |
+|---|---|---|
+| Hover | 8% (`0.08`) | All interactive surfaces |
+| Focus | 12% (`0.12`) | All interactive surfaces |
+| Pressed | 12% (`0.12`) | Buttons, chips, rows |
+| Dragged | 16% (`0.16`) | Draggable list items |
+| Disabled (content) | 38% (`0.38`) | Text, icons in disabled els |
+| Disabled (container) | 12% (`0.12`) | Background of disabled el |
+
+**All interactive components must use M3 state layers.** The CSS classes below implement this automatically via `::before`.
+
+---
+
+## 6 · Component Primitives
+
+### Surfaces / Cards
+```tsx
+// Elevation 1 — standard card at rest (shadow + tinted surface)
+<div className="md-card p-6">...</div>
+
+// Interactive card — adds state layer on hover/press + elevates
+<div className="md-card-interactive p-6">...</div>
+
+// Extra Large shape — hero/feature cards
+<div className="md-card-xl p-8">...</div>
+
+// Tonal card — primary-tinted for stat highlights
+<div className="md-card-tonal p-6">...</div>
+```
+
+### Buttons (all use `rounded-full`)
+```tsx
+// Filled — highest emphasis, primary action
+<button className="md-btn-filled">Request Secure Intro</button>
+
+// Filled Tonal — secondary emphasis (secondary-container bg)
+<button className="md-btn-tonal">Save Draft</button>
+
+// Elevated — above-surface, shadow at rest
+<button className="md-btn-elevated">Export</button>
+
+// Outlined — medium emphasis, border only
+<button className="md-btn-outlined">Cancel</button>
+
+// Text — lowest emphasis, no bg or border
+<button className="md-btn-text">Learn More</button>
+
+// Error / Destructive
+<button className="md-btn-error">Remove Expert</button>
+
+// Icon button
+<button className="md-btn-icon"><Trash2 className="w-5 h-5" /></button>
+```
+
+### Badges / Chips
 ```tsx
 // Tier badges
-<span className="cc-badge-contributor">Contributor</span>
-<span className="cc-badge-validator">Validator</span>
-<span className="cc-badge-expert">Expert</span>
-<span className="cc-badge-partner">Partner</span>
+<span className="cc-badge cc-badge-contributor">Contributor</span>
+<span className="cc-badge cc-badge-validator">Validator</span>
+<span className="cc-badge cc-badge-expert">Expert</span>
+<span className="cc-badge cc-badge-partner">Partner</span>
 
-// Status pills
-<span className="cc-status-pending">Pending</span>
-<span className="cc-status-complete">Complete</span>
-<span className="cc-status-validating">Validating</span>
-<span className="cc-status-flagged">Flagged</span>
-<span className="cc-status-rejected">Rejected</span>
+// Status chips
+<span className="cc-status cc-status-pending">Pending</span>
+<span className="cc-status cc-status-complete">Complete</span>
+<span className="cc-status cc-status-validating">Validating</span>
+<span className="cc-status cc-status-flagged">Flagged</span>
 
-// Domain / taxonomy tags
-<span className="cc-tag">law_legal</span>
+// Interactive M3 chip (with state layer)
+<button className="md-chip">law_legal</button>
+<button className="md-chip selected">biomedical</button>
+
+// Domain tag (static)
+<span className="cc-tag">clinical_eval</span>
 ```
 
-**Pill anatomy:**
-`bg-{color}-50 text-{color}-700 border border-{color}-200 rounded-full px-2.5 py-0.5 text-xs font-semibold`
-
----
-
-### Data Tables
+### Text Fields
 ```tsx
-<table className="cc-table">
+// Filled (M3 standard — flat bottom border, colored bg)
+<input className="md-input-filled" placeholder="Search experts…" />
+
+// Outlined (M3 standard — full border, transparent bg)
+<input className="md-input-outlined" placeholder="Search experts…" />
+
+// Compute Commons shorthand (outlined + 8px radius)
+<input className="cc-input" placeholder="Search ID or domain…" />
+<select className="cc-select">…</select>
+```
+
+### Tables
+```tsx
+<table className="md-table w-full">
   <thead>
     <tr>
-      <th>Candidate</th>
+      <th>Candidate ID</th>
+      <th>Domain</th>
       <th>Score</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>Expert_042</td>
-      <td>94%</td>
+      <td className="text-body-md">Law & Legal</td>
+      <td className="font-mono tabular-nums">94%</td>
     </tr>
   </tbody>
 </table>
 ```
-**Rules:**
-- No vertical dividers — horizontal `border-b border-slate-100` only
-- `hover:bg-slate-50` on tbody rows for interactivity
-- Column headers: `text-[11px] font-semibold text-slate-400 uppercase tracking-widest`
+State layer on rows handled automatically via `::after` pseudo.
 
----
-
-### Form Inputs
+### Navigation
 ```tsx
-<label className="cc-label">Search</label>
-<input className="cc-input" placeholder="Search ID or domain…" />
-<select className="cc-select">…</select>
+<nav>
+  <a href="/dashboard" className="md-nav-item active">
+    <LayoutDashboard className="w-5 h-5" />
+    Dashboard
+  </a>
+  <a href="/workspace" className="md-nav-item">
+    <Terminal className="w-5 h-5" />
+    Partner Workspace
+  </a>
+</nav>
 ```
 
-Focus state: `border-indigo-500` + `box-shadow: 0 0 0 3px rgb(79 70 229 / 0.18)`
-
----
-
-### Numeric Displays
+### Numerics
 ```tsx
-// Credit balance (large, emerald)
+// Large stat — credit balance
 <span className="cc-num-xl cc-num-earned tabular-nums">1,420</span>
 
-// Trust score (brand)
-<span className="cc-num-lg cc-num-brand">88.4</span>
+// Medium stat — trust score
+<span className="cc-num-lg cc-num-primary">88.4</span>
 
-// Inline stat
+// Inline — card metric
 <span className="cc-num-md tabular-nums">627 pts</span>
 ```
 
----
-
-### Progress Bars
+### Progress
 ```tsx
-<div className="cc-progress-track">
-  <div className="cc-progress-fill bg-indigo-500" style={{ width: '74%' }} />
+// Determinate
+<div className="md-progress-track">
+  <div className="md-progress-fill" style={{ width: '74%' }} />
 </div>
 
-// Gradient brand fill
-<div className="cc-progress-track">
-  <div className="cc-progress-fill cc-progress-fill-brand" style={{ width: '68%' }} />
+// Earned variant
+<div className="md-progress-track">
+  <div className="md-progress-fill earned" style={{ width: '91%' }} />
 </div>
+```
+
+### Skeleton Loaders
+```tsx
+<div className="md-skeleton h-4 w-32 rounded-xs mb-2" />
+<div className="md-skeleton h-4 w-24 rounded-xs" />
+```
+
+### Score Ring
+```tsx
+<div className="cc-score-ring">88.4</div>
+<div className="cc-score-ring earned">91%</div>
+```
+
+### Dividers
+```tsx
+<hr className="md-divider" />          // Full bleed
+<hr className="md-divider-inset" />    // Inset (icon-list style)
+```
+
+### Code Blocks (Partner Workspace)
+```tsx
+<pre className="cc-code-block max-h-72">
+  {JSON.stringify(payload, null, 2)}
+</pre>
 ```
 
 ---
 
-## 5 · Surface Contexts
+## 7 · Surface Contexts
 
-Apply `data-surface="..."` to `<main>` or a wrapper `<div>`:
+Apply `data-surface` to `<main>` or a containing `<div>` to shift the color role tokens for that section:
 
-| Value | Where | Override |
+| Value | Where | Effect |
 |---|---|---|
-| `contributor` | Contributor Dashboard | Accent → emerald, progress fill → emerald |
-| `partner` | Partner Workspace | bg-slate-50 shell, brand accent, dense type |
-| `profile` | Public Profile pages | bg-white, 17px base font, relaxed leading |
+| `contributor` | Contributor Dashboard | Rebases `--md-primary` to emerald (earned-forward). FABs, progress, score ring all go green. |
+| `partner` | Partner Workspace | Darker surface shell (`#f3f2fb`), smaller default font for density. |
+| `profile` | Public Profile | Pure white surface, slightly larger font, relaxed leading. |
 
 ```tsx
+<main data-surface="contributor">
+  {/* Score ring, FABs, progress bars all use emerald now */}
+</main>
+
 <main data-surface="partner">
-  {/* Dense monospace evidence data, indigo accent */}
+  {/* Dense type, darker background */}
 </main>
 ```
 
 ---
 
-## 6 · Surface-Specific Vibes
+## 8 · Motion
 
-### Contributor Dashboard
-> **Vibe:** Reward & Progression. Make contributions feel valuable.
+M3 uses **Standard** (most transitions) and **Emphasized** (expressive entrances) easing.
 
-- Credit balance: `cc-num-xl cc-num-earned` — large, emerald, always visible
-- Trust score: `cc-score-ring` or circular SVG with indigo ring
-- Tier badge: `cc-badge-{tier}` in header, always present
-- Progress bars: `cc-progress-fill-brand`, animated on mount
-- Acted-on: `cc-status-complete` pill + `Zap` icon
-- Stats: `cc-card-hero` for highlights, `cc-card` for activity lists
-
-### Partner Workspace
-> **Vibe:** Data & Rigor. VPs need density without decoration.
-
-- Fixed split pane: `bg-slate-50` left, `bg-white` right
-- Evidence prose: `text-sm text-slate-700 leading-relaxed`
-- AI payload evidence: `cc-code-block` (monospace, slate-50 bg)
-- JSON toggle: `bg-slate-50` pre-block, muted syntax (no terminal neon)
-- Work sample cards: `cc-card cc-card-hover`
-- Vulnerability block: `bg-red-50 border border-red-100 rounded-lg p-4`
-- Ground truth block: `bg-emerald-50 border border-emerald-100 rounded-lg p-4`
-
-### Public Profiles
-> **Vibe:** Authority. This is an expert's portfolio.
-
-- `data-surface="profile"` gives bg-white and 17px base font
-- Hero: full-width header, `cc-card-hero`, handle + tier badge + trust score ring
-- Work samples: `cc-card cc-card-hover p-8`
-- Section labels: `text-2xl font-semibold tracking-tight`
-- Peer consensus: `cc-num-lg cc-num-brand` for the verified count
-
----
-
-## 7 · Animation
+| M3 Curve | CSS var | Tailwind class | Use |
+|---|---|---|---|
+| Standard | `cubic-bezier(0.2, 0, 0, 1)` | `ease-m3-standard` | State changes, color transitions |
+| Decelerate | `cubic-bezier(0, 0, 0, 1)` | `ease-m3-decelerate` | Entering elements |
+| Accelerate | `cubic-bezier(0.3, 0, 1, 1)` | `ease-m3-accelerate` | Exiting elements |
 
 ```tsx
-// Entrances
+// Standard entrance
 <div className="animate-fade-in-up">...</div>
-<div className="animate-slide-in-right">...</div>
+
+// Dialog / modal
 <div className="animate-scale-in">...</div>
 
-// Stagger list children
-<div className="animate-fade-in-up stagger-1">First item</div>
-<div className="animate-fade-in-up stagger-2">Second item</div>
-<div className="animate-fade-in-up stagger-3">Third item</div>
+// Drawer / panel
+<div className="animate-slide-in-right">...</div>
 
-// Skeleton loaders
-<div className="cc-skeleton h-4 w-32 rounded mb-2" />
-<div className="cc-skeleton h-4 w-24 rounded" />
+// Skeleton
+<div className="md-skeleton h-5 w-40 rounded-xs" />
 
-// Pulse ring on primary CTA
-<button className="cc-btn-primary animate-pulse-ring">
-  Request Secure Intro
-</button>
+// Stagger list
+<div className="animate-fade-in-up stagger-1">...</div>
+<div className="animate-fade-in-up stagger-2">...</div>
+<div className="animate-fade-in-up stagger-3">...</div>
+```
+
+**All interactive elements must use:**
+```tsx
+className="transition-all duration-short-4 ease-m3-standard"
+// or the shorthand already built into md-btn, md-card-interactive, etc.
 ```
 
 ---
 
-## 8 · Quick Reference
+## 9 · M3 vs Previous System — Migration Notes
+
+| Old class | M3 replacement | Notes |
+|---|---|---|
+| `bg-white` (cards) | `md-card` or `bg-surface-container-low` | Adds elevation + tint |
+| `border border-slate-200` | ❌ Remove — use elevation instead | M3 doesn't use borders for separation |
+| `rounded-xl` (buttons) | `rounded-full` | M3 buttons ALWAYS pill |
+| `rounded-xl` (cards) | `rounded-md` (12px) or `rounded-xl` (28px) | Kept — maps to Large/Extra Large |
+| `shadow-sm` | `shadow-elev-1` | Same shadow, but now has a name |
+| `text-slate-900` | `text-on-surface` or `color: var(--md-on-surface)` | Use role not raw color |
+| `text-slate-600` | `text-on-surface-variant` or `color: var(--md-on-surface-variant)` | |
+| `bg-indigo-50` (chips) | `bg-primary-container text-on-primary-container` | Tonal container pair |
+| `hover:bg-slate-50` | (built into state layer via `::before`) | Use `md-card-interactive` |
+| `.cc-btn-primary` | `.md-btn-filled` | New M3 button family |
+| `.cc-btn-secondary` | `.md-btn-elevated` or `.md-btn-outlined` | Choose by emphasis |
+
+---
+
+## 10 · Quick Reference
 
 ```
-─── BACKGROUNDS ──────────────────────────────────────────────────
-bg-white         Cards, modals, main content
-bg-slate-50      App shell, sidebars, pane backgrounds
-bg-slate-100     Table rows, input fills, nested panels
+─── COLOR ROLES ─────────────────────────────────────────────────────────────────
+Primary            --md-primary             #4f46e5   filled buttons, active states
+On Primary         --md-on-primary          #ffffff   text ON primary
+Primary Container  --md-primary-container   #e0e7ff   chips, tonal card bg
+Earned             --md-earned              #059669   credits, completions
+Staked             --md-staked              #d97706   pending, staked
+Error              --md-error               #b91c1c   rejected, flagged
 
-─── BORDERS ──────────────────────────────────────────────────────
-border-slate-200   Default — never darker unless active
-border-slate-300   Strong — inputs on focus-adjacent
+─── SURFACE ROLES ───────────────────────────────────────────────────────────────
+Surface                     --md-surface                #f8f7ff  app shell
+Surface Container Low       --md-surface-container-low  #f3f2fb  sidebar, nav
+Surface Container           --md-surface-container      #eeedf5  standard card
+Surface Container High      --md-surface-container-high #e8e7ef  filled inputs
+Surface Container Highest   --md-surface-container-highest       tooltip, overlay
 
-─── TEXT ─────────────────────────────────────────────────────────
-text-slate-900   Primary headings
-text-slate-600   Body copy, secondary
-text-slate-400   Muted / placeholder
+─── SHAPE ───────────────────────────────────────────────────────────────────────
+Buttons         rounded-full  (ALWAYS)
+Chips / Tags    rounded-sm    (8px)
+Cards           rounded-md    (12px Medium)
+Hero Cards      rounded-xl    (28px Extra Large)
+Inputs          rounded-xs    (4px) filled top only, or rounded-sm for outlined
 
-─── BRAND ────────────────────────────────────────────────────────
-indigo-600       Primary action
-indigo-700       Hover
-indigo-50        Tinted background (active rows, tags)
+─── ELEVATION ───────────────────────────────────────────────────────────────────
+Level 0  shadow-elev-0  flat             body text, dividers
+Level 1  shadow-elev-1  shadow-sm        cards at rest, search bars
+Level 2  shadow-elev-2  shadow-md        nav, hover cards
+Level 3  shadow-elev-3  shadow-lg        dialogs, FABs
 
-─── SEMANTIC ─────────────────────────────────────────────────────
-emerald-600 / emerald-50    Earned / approved
-amber-600   / amber-50      Staked / pending
-rose-600    / rose-50       Flagged / rejected
+─── BUTTONS ─────────────────────────────────────────────────────────────────────
+md-btn-filled    primary action, indigo bg, white text, rounded-full
+md-btn-tonal     secondary, violet-container bg, semi-emphasis
+md-btn-elevated  surface bg, primary text, has shadow
+md-btn-outlined  transparent bg, outline border, primary text
+md-btn-text      no bg, no border, primary text, minimum emphasis
+md-btn-error     error bg, white text, destructive
+md-btn-icon      circle, icon only, no bg
 
-─── COMPONENT SHORTCUTS ──────────────────────────────────────────
-cc-card              bg-white rounded-xl border-slate-200 shadow-sm p-6
-cc-card-hover        lifts shadow + darkens border on :hover
-cc-card-hero         + accent top stripe
-cc-btn-primary       bg-indigo-600 text-white rounded-lg px-4 py-2
-cc-btn-secondary     bg-white text-slate-700 border-slate-300
-cc-badge-{tier}      pastel pill for contributor/validator/expert/partner
-cc-status-{state}    pastel pill for pending/complete/validating/flagged
-cc-tag               slate-100 neutral domain tag
-cc-input / cc-select form inputs with indigo focus ring
-cc-table             clean rows, no vertical lines, hover:bg-slate-50
-cc-num-xl/lg/md      mono numeric displays
-cc-score-ring        circular trust score display
-cc-progress-track    full-width 6px track
-cc-code-block        slate-50 mono evidence block
-cc-section-label     11px uppercase tracking-widest text-slate-400
-cc-nav-link          sidebar nav, .active = indigo-50 bg
-cc-skeleton          shimmer loading placeholder
+─── TYPE SCALE ──────────────────────────────────────────────────────────────────
+text-display-lg/md/sm    Large expressive numbers and heroes
+text-headline-lg/md/sm   Page and section titles
+text-title-lg/md/sm      Card titles, dialog headers, pane labels
+text-body-lg/md/sm       Body copy (body-lg is default)
+text-label-lg/md/sm      Button text, chip text, table labels
 
-─── TYPOGRAPHY ───────────────────────────────────────────────────
-All H1–H3: tracking-tight (-0.025em)
-Scores/IDs: font-mono tabular-nums
-Section labels: uppercase tracking-widest text-[11px]
-Hero counts: font-mono font-bold text-4xl
+─── STATE LAYERS (auto in md-* classes) ─────────────────────────────────────────
+Hover    8%  of on-color
+Focus   12%  of on-color
+Pressed 12%  of on-color
 
-─── SHADOWS ──────────────────────────────────────────────────────
-shadow-sm    Card default — never heavier
-shadow-md    Card hover only
-
-─── NEVER ────────────────────────────────────────────────────────
-- No shadow-lg or shadow-xl on cards
-- No bg-slate-900 / bg-slate-950 (dark styles only in code blocks)
-- No raw color text without semantic pairing (e.g. no bare text-red-500)
-- No border-slate-800 or darker borders on light surfaces
+─── NEVER ───────────────────────────────────────────────────────────────────────
+- NO border-alone for separation — use elevation
+- NO rounded-xl or rounded-lg on buttons — always rounded-full
+- NO raw text-slate-* colors — use on-surface / on-surface-variant
+- NO heavy shadows (shadow-xl, shadow-2xl) — max is shadow-elev-3
+- NO background-color changes on hover — use ::before state layer
 ```
 
 ---
 
-> **Files:** `tailwind.config.js` · `src/app/globals.css` · this doc (`design-system.md`)
+> **Spec reference:** https://m3.material.io/  
+> **Files:** `tailwind.config.js` · `src/app/globals.css` · `design-system.md`  
 > **Last updated:** April 2026
