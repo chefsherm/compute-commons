@@ -1,291 +1,477 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Compute Commons · Global Design System Stylesheet
+   Theme: High-Trust Premium SaaS (Stripe / Linear / Vercel)
+   Mode: Light-first with a full dark-mode override class if needed later.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Web fonts ─────────────────────────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. CSS Custom Properties (Design Tokens)
+   These map directly to the Tailwind config values so they can also be
+   consumed by vanilla CSS components and third-party libs.
+   ═══════════════════════════════════════════════════════════════════════════ */
 :root {
-  --bg: #020617;
-  --surface: #0f172a;
-  --surface-2: #1e293b;
-  --border: #334155;
-  --text: #f1f5f9;
-  --text-muted: #94a3b8;
-  --indigo: #6366f1;
-  --indigo-light: #818cf8;
-  --amber: #f59e0b;
-  --emerald: #10b981;
-  --rose: #f43f5e;
-  --violet: #8b5cf6;
+  /* Backgrounds */
+  --cc-bg:           #f8fafc;   /* slate-50  — app shell  */
+  --cc-surface:      #ffffff;   /* white     — cards      */
+  --cc-surface-2:    #f1f5f9;   /* slate-100 — inputs, sidebar rows */
+
+  /* Borders */
+  --cc-border:       #e2e8f0;   /* slate-200 */
+  --cc-border-strong:#cbd5e1;   /* slate-300 */
+
+  /* Text */
+  --cc-text:         #0f172a;   /* slate-900  — primary headings    */
+  --cc-text-body:    #475569;   /* slate-600  — body / secondary    */
+  --cc-text-muted:   #94a3b8;   /* slate-400  — placeholders, hints */
+
+  /* Brand */
+  --cc-brand:        #4f46e5;   /* indigo-600 — primary actions     */
+  --cc-brand-hover:  #4338ca;   /* indigo-700 — hover               */
+  --cc-brand-light:  #eef2ff;   /* indigo-50  — tinted bg           */
+  --cc-brand-ring:   rgb(79 70 229 / 0.18);
+
+  /* Semantic — Earned / Approved */
+  --cc-earned:       #059669;   /* emerald-600 */
+  --cc-earned-light: #ecfdf5;   /* emerald-50  */
+
+  /* Semantic — Staked / Pending */
+  --cc-staked:       #d97706;   /* amber-600   */
+  --cc-staked-light: #fffbeb;   /* amber-50    */
+
+  /* Semantic — Flagged / Rejected */
+  --cc-flagged:      #e11d48;   /* rose-600    */
+  --cc-flagged-light:#fff1f2;   /* rose-50     */
+
+  /* Elevation (box-shadow) */
+  --cc-shadow-card:  0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --cc-shadow-md:    0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+
+  /* Radii */
+  --cc-radius-sm:    6px;
+  --cc-radius:       10px;
+  --cc-radius-lg:    14px;
+  --cc-radius-xl:    18px;
+
+  /* Transitions */
+  --cc-transition:   150ms ease;
 }
 
-* {
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. Base reset & typography
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', sans-serif;
-  -webkit-font-smoothing: antialiased;
+  background-color: var(--cc-bg);
+  color: var(--cc-text-body);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
 }
 
-/* ─── Design Tokens ─── */
-.surface { background: var(--surface); }
-.surface-2 { background: var(--surface-2); }
-.border-dim { border-color: var(--border); }
-.text-muted { color: var(--text-muted); }
-
-/* ─── Cards ─── */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.5rem;
-}
-
-.card-sm {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 1rem;
-}
-
-.card-hover {
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.card-hover:hover {
-  border-color: var(--indigo);
-  box-shadow: 0 0 0 1px var(--indigo), 0 4px 24px rgba(99,102,241,0.12);
-}
-
-/* ─── Glassy hero cards ─── */
-.hero-card {
-  background: linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(15,23,42,0.8) 100%);
-  border: 1px solid rgba(99,102,241,0.25);
-  border-radius: 16px;
-  padding: 1.75rem;
-  backdrop-filter: blur(12px);
-  position: relative;
-  overflow: hidden;
-}
-.hero-card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle at center, rgba(99,102,241,0.06) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-/* ─── Tier Badges ─── */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 10px;
-  border-radius: 999px;
-  font-size: 0.7rem;
+/* Heading baseline — tracking-tight applied globally to h1–h3 */
+h1, h2, h3 {
+  color: var(--cc-text);
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: -0.025em;         /* tracking-tight */
+  line-height: 1.25;
 }
 
-.badge-contributor { background: rgba(148,163,184,0.15); color: #94a3b8; border: 1px solid rgba(148,163,184,0.3); }
-.badge-validator    { background: rgba(99,102,241,0.15);  color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }
-.badge-expert       { background: rgba(245,158,11,0.15);  color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
-.badge-partner      { background: rgba(139,92,246,0.15);  color: #a78bfa; border: 1px solid rgba(139,92,246,0.3); }
+h1 { font-size: 2.25rem; font-weight: 700; letter-spacing: -0.04em; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.125rem; }
 
-/* ─── Status Pills ─── */
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 500;
-}
-.status-pending    { background: rgba(245,158,11,0.15); color: #fbbf24; }
-.status-validating { background: rgba(99,102,241,0.15); color: #818cf8; }
-.status-complete   { background: rgba(16,185,129,0.15); color: #34d399; }
-.status-flagged    { background: rgba(244,63,94,0.15);  color: #fb7185; }
-.status-rejected   { background: rgba(239,68,68,0.15);  color: #f87171; }
-.status-on_hold    { background: rgba(251,191,36,0.15); color: #fbbf24; }
+p { color: var(--cc-text-body); }
 
-/* ─── Buttons ─── */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 18px;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s;
-  border: none;
-}
-.btn-primary {
-  background: var(--indigo);
-  color: white;
-}
-.btn-primary:hover { background: var(--indigo-light); transform: translateY(-1px); }
-.btn-secondary {
-  background: var(--surface-2);
-  color: var(--text);
-  border: 1px solid var(--border);
-}
-.btn-secondary:hover { border-color: var(--indigo); color: var(--indigo-light); }
-.btn-danger { background: rgba(244,63,94,0.15); color: #fb7185; border: 1px solid rgba(244,63,94,0.3); }
-.btn-danger:hover { background: rgba(244,63,94,0.25); }
-.btn-success { background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
-.btn-success:hover { background: rgba(16,185,129,0.25); }
-
-/* ─── Number displays ─── */
-.mono { font-family: 'JetBrains Mono', monospace; }
-.num-xl { font-size: 2.5rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; line-height: 1; }
-.num-lg { font-size: 1.75rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
-.num-md { font-size: 1.25rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
-
-/* ─── Section headers ─── */
-.section-label {
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
-  margin-bottom: 0.75rem;
-}
-
-/* ─── Tables ─── */
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.875rem;
-}
-.data-table th {
-  text-align: left;
-  padding: 10px 16px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--text-muted);
-  border-bottom: 1px solid var(--border);
-}
-.data-table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(51,65,85,0.5);
-  vertical-align: middle;
-}
-.data-table tr:hover td { background: rgba(99,102,241,0.04); }
-.data-table tr:last-child td { border-bottom: none; }
-
-/* ─── Progress bars ─── */
-.progress-track {
-  height: 4px;
-  background: var(--border);
-  border-radius: 999px;
-  overflow: hidden;
-}
-.progress-fill {
-  height: 100%;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--indigo), var(--violet));
-  transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-/* ─── Nav ─── */
-.nav-link {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-muted);
+/* Clean link defaults */
+a {
+  color: var(--cc-brand);
   text-decoration: none;
-  transition: all 0.15s;
+  transition: color var(--cc-transition);
 }
-.nav-link:hover, .nav-link.active {
-  background: rgba(99,102,241,0.1);
-  color: var(--indigo-light);
+a:hover { color: var(--cc-brand-hover); }
+
+/* Scrollbar — thin, neutral */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--cc-surface-2); }
+::-webkit-scrollbar-thumb { background: var(--cc-border-strong); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--cc-text-muted); }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. Component Layer  (@layer components)
+   Utility classes that map directly to the Design System spec.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer components {
+
+  /* ── Cards & Containers ─────────────────────────────────────────────────── */
+
+  .cc-card {
+    background: var(--cc-surface);
+    border: 1px solid var(--cc-border);
+    border-radius: var(--cc-radius-lg);      /* rounded-xl */
+    padding: 1.5rem;                          /* p-6 */
+    box-shadow: var(--cc-shadow-card);
+  }
+
+  /* Interactive card — lifts on hover */
+  .cc-card-hover {
+    transition: box-shadow var(--cc-transition), border-color var(--cc-transition);
+  }
+  .cc-card-hover:hover {
+    box-shadow: var(--cc-shadow-md);
+    border-color: var(--cc-border-strong);
+  }
+
+  /* Dense card — less padding, used in workspace lists */
+  .cc-card-sm {
+    background: var(--cc-surface);
+    border: 1px solid var(--cc-border);
+    border-radius: var(--cc-radius);         /* rounded-lg */
+    padding: 1rem;                            /* p-4 */
+    box-shadow: var(--cc-shadow-card);
+  }
+
+  /* Hero / stat card — larger padding, slight tint */
+  .cc-card-hero {
+    background: var(--cc-surface);
+    border: 1px solid var(--cc-border);
+    border-radius: var(--cc-radius-xl);
+    padding: 2rem;                            /* p-8 */
+    box-shadow: var(--cc-shadow-card);
+    position: relative;
+    overflow: hidden;
+  }
+  /* Accent top stripe for hero cards */
+  .cc-card-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    border-radius: var(--cc-radius-xl) var(--cc-radius-xl) 0 0;
+  }
+
+
+  /* ── Buttons ────────────────────────────────────────────────────────────── */
+
+  /* Base shared styles */
+  .cc-btn {
+    @apply inline-flex items-center gap-2 font-medium text-sm rounded-lg
+           px-4 py-2 transition-colors cursor-pointer border select-none;
+    box-shadow: var(--cc-shadow-card);
+  }
+  .cc-btn:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
+  /* Primary — brand action */
+  .cc-btn-primary {
+    @apply cc-btn bg-indigo-600 text-white border-indigo-600
+           hover:bg-indigo-700 hover:border-indigo-700 active:bg-indigo-800;
+  }
+
+  /* Secondary — supporting action */
+  .cc-btn-secondary {
+    @apply cc-btn bg-white text-slate-700 border-slate-300
+           hover:bg-slate-50 hover:border-slate-400;
+  }
+
+  /* Destructive */
+  .cc-btn-danger {
+    @apply cc-btn bg-white text-rose-600 border-rose-300
+           hover:bg-rose-50 hover:border-rose-400;
+  }
+
+  /* Icon-only button */
+  .cc-btn-icon {
+    @apply cc-btn px-2 py-2 text-slate-500 bg-white border-slate-200
+           hover:bg-slate-50 hover:text-slate-700;
+  }
+
+
+  /* ── Badges ─────────────────────────────────────────────────────────────── */
+
+  /* Base pill */
+  .cc-badge {
+    @apply inline-flex items-center gap-1 text-xs font-semibold
+           rounded-full px-2.5 py-0.5 border;
+  }
+
+  /* Tier badges */
+  .cc-badge-contributor { @apply cc-badge text-slate-600 bg-slate-100 border-slate-200; }
+  .cc-badge-validator   { @apply cc-badge text-indigo-700 bg-indigo-50 border-indigo-200; }
+  .cc-badge-expert      { @apply cc-badge text-amber-700 bg-amber-50 border-amber-200; }
+  .cc-badge-partner     { @apply cc-badge text-violet-700 bg-violet-50 border-violet-200; }
+
+  /* Status pills */
+  .cc-status {
+    @apply inline-flex items-center gap-1.5 text-xs font-medium rounded-full px-2.5 py-1;
+  }
+  .cc-status-pending    { @apply cc-status text-amber-700 bg-amber-50 border border-amber-200; }
+  .cc-status-validating { @apply cc-status text-indigo-700 bg-indigo-50 border border-indigo-200; }
+  .cc-status-complete   { @apply cc-status text-emerald-700 bg-emerald-50 border border-emerald-200; }
+  .cc-status-flagged    { @apply cc-status text-rose-700 bg-rose-50 border border-rose-200; }
+  .cc-status-rejected   { @apply cc-status text-red-700 bg-red-50 border border-red-200; }
+  .cc-status-on_hold    { @apply cc-status text-slate-600 bg-slate-100 border border-slate-200; }
+
+  /* Domain / taxonomy tags */
+  .cc-tag {
+    @apply inline-flex items-center text-xs font-medium text-slate-600
+           bg-slate-100 border border-slate-200 rounded-full px-2.5 py-0.5;
+  }
+
+
+  /* ── Inputs ─────────────────────────────────────────────────────────────── */
+
+  .cc-input {
+    @apply w-full bg-white border border-slate-300 rounded-lg text-sm
+           text-slate-800 placeholder-slate-400 px-3 py-2 outline-none
+           transition-shadow;
+  }
+  .cc-input:focus {
+    @apply border-indigo-500;
+    box-shadow: 0 0 0 3px var(--cc-brand-ring);
+  }
+
+  .cc-select {
+    @apply cc-input cursor-pointer appearance-none;
+  }
+
+  .cc-label {
+    @apply block text-xs font-semibold text-slate-600 mb-1;
+  }
+
+
+  /* ── Data Tables ─────────────────────────────────────────────────────────── */
+
+  .cc-table {
+    @apply w-full text-sm border-collapse;
+  }
+  .cc-table th {
+    @apply text-left text-[11px] font-semibold text-slate-400 uppercase
+           tracking-widest px-4 py-2.5 border-b border-slate-200 bg-slate-50;
+  }
+  .cc-table td {
+    @apply px-4 py-3 border-b border-slate-100 text-slate-700 align-middle;
+  }
+  .cc-table tr:last-child td { @apply border-b-0; }
+  .cc-table tbody tr { @apply transition-colors; }
+  .cc-table tbody tr:hover td { @apply bg-slate-50; }
+
+
+  /* ── Section labels ─────────────────────────────────────────────────────── */
+
+  .cc-section-label {
+    @apply text-[11px] font-semibold text-slate-400 uppercase tracking-widest;
+  }
+
+
+  /* ── Progress bars ───────────────────────────────────────────────────────── */
+
+  .cc-progress-track {
+    @apply h-1.5 w-full bg-slate-100 rounded-full overflow-hidden;
+  }
+  .cc-progress-fill {
+    @apply h-full rounded-full transition-all duration-500;
+    /* Caller adds color class: bg-indigo-500, bg-emerald-500, etc. */
+  }
+  /* Gradient fill variant */
+  .cc-progress-fill-brand {
+    background: linear-gradient(90deg, #4f46e5, #7c3aed);
+  }
+
+
+  /* ── Nav links ───────────────────────────────────────────────────────────── */
+
+  .cc-nav-link {
+    @apply flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium
+           text-slate-500 transition-colors no-underline;
+  }
+  .cc-nav-link:hover {
+    @apply bg-slate-100 text-slate-800;
+  }
+  .cc-nav-link.active,
+  .cc-nav-link[data-active='true'] {
+    @apply bg-indigo-50 text-indigo-700;
+  }
+
+
+  /* ── Number / metric displays ────────────────────────────────────────────── */
+
+  /* Used on credit balances, trust scores, stat cards */
+  .cc-num-xl {
+    @apply font-mono text-4xl font-bold tracking-tightest text-slate-900;
+  }
+  .cc-num-lg {
+    @apply font-mono text-2xl font-bold text-slate-900;
+  }
+  .cc-num-md {
+    @apply font-mono text-lg font-semibold text-slate-800;
+  }
+
+  /* Coloured metric variants */
+  .cc-num-earned  { @apply text-emerald-600; }
+  .cc-num-staked  { @apply text-amber-600; }
+  .cc-num-flagged { @apply text-rose-600; }
+  .cc-num-brand   { @apply text-indigo-600; }
+
+
+  /* ── Trust / score ring ─────────────────────────────────────────────────── */
+
+  .cc-score-ring {
+    @apply w-20 h-20 rounded-full border-2 border-indigo-200 bg-indigo-50
+           flex items-center justify-center font-mono font-bold text-xl text-indigo-700;
+  }
+  .cc-score-ring-earned {
+    @apply border-emerald-200 bg-emerald-50 text-emerald-700;
+  }
+
+
+  /* ── Skeleton loaders ────────────────────────────────────────────────────── */
+
+  .cc-skeleton {
+    background: linear-gradient(
+      90deg,
+      #f1f5f9 25%,    /* slate-100 */
+      #e2e8f0 50%,    /* slate-200 */
+      #f1f5f9 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s linear infinite;
+    border-radius: 6px;
+  }
+
+
+  /* ── Dividers ────────────────────────────────────────────────────────────── */
+
+  .cc-divider {
+    @apply border-none border-t border-slate-200 my-6;
+  }
+
+
+  /* ── Inline code / raw AI payloads ──────────────────────────────────────── */
+
+  /* Partner Workspace: dense, monospace evidence blocks */
+  .cc-code-block {
+    @apply font-mono text-sm text-slate-700 bg-slate-50 border border-slate-200
+           rounded-lg p-4 overflow-auto leading-relaxed;
+  }
+
+  code, kbd {
+    font-family: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+    font-size: 0.85em;
+  }
+  :not(pre) > code {
+    @apply bg-slate-100 text-slate-700 rounded px-1.5 py-0.5 text-xs;
+  }
 }
 
-/* ─── Animations ─── */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. Utility Layer  (@layer utilities)
+   One-off helpers not in Tailwind's core.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer utilities {
+
+  /* Stagger animation delays */
+  .stagger-1  { animation-delay: 50ms;  }
+  .stagger-2  { animation-delay: 100ms; }
+  .stagger-3  { animation-delay: 150ms; }
+  .stagger-4  { animation-delay: 200ms; }
+  .stagger-5  { animation-delay: 250ms; }
+  .stagger-6  { animation-delay: 300ms; }
+
+  /* Typography helpers */
+  .text-balance { text-wrap: balance; }
+
+  /* Number tabular figures (for aligned financial data) */
+  .tabular-nums { font-variant-numeric: tabular-nums; }
+
+  /* Full-bleed section */
+  .full-bleed {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+  }
 }
-@keyframes pulse-ring {
-  0%   { box-shadow: 0 0 0 0 rgba(99,102,241,0.4); }
-  70%  { box-shadow: 0 0 0 8px rgba(99,102,241,0); }
-  100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. Surface Contexts
+   Override body defaults per page type using a data-surface attribute or
+   class on <main> / <body> so every page section can shift its tone.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Contributor Dashboard — reward-forward feel */
+[data-surface='contributor'] {
+  --cc-accent:        var(--cc-earned);
+  --cc-accent-light:  var(--cc-earned-light);
+  --cc-progress-fill: #059669;
 }
+
+/* Partner Workspace — data/rigor */
+[data-surface='partner'] {
+  --cc-bg: #f8fafc;
+  --cc-accent: var(--cc-brand);
+}
+
+/* Public Profile — authority, large type */
+[data-surface='profile'] {
+  --cc-bg:    #ffffff;
+  --cc-accent: var(--cc-brand);
+  font-size:   17px;
+  line-height: 1.7;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   6. Animations  (defined here, referenced in tailwind.config.js keyframes)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 @keyframes shimmer {
   from { background-position: -200% 0; }
-  to   { background-position: 200% 0; }
+  to   { background-position:  200% 0; }
 }
 
-.fade-in-up { animation: fadeInUp 0.4s ease both; }
-.pulse-ring  { animation: pulse-ring 2s infinite; }
-
-.stagger-1 { animation-delay: 0.05s; }
-.stagger-2 { animation-delay: 0.10s; }
-.stagger-3 { animation-delay: 0.15s; }
-.stagger-4 { animation-delay: 0.20s; }
-.stagger-5 { animation-delay: 0.25s; }
-
-/* ─── Skeleton loader ─── */
-.skeleton {
-  background: linear-gradient(90deg, var(--surface-2) 25%, var(--border) 50%, var(--surface-2) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: 6px;
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── Input ─── */
-.input {
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 9px 14px;
-  color: var(--text);
-  font-size: 0.875rem;
-  outline: none;
-  transition: border-color 0.15s;
-  width: 100%;
-}
-.input:focus { border-color: var(--indigo); box-shadow: 0 0 0 3px rgba(99,102,241,0.15); }
-.input::placeholder { color: var(--text-muted); }
-
-select.input { cursor: pointer; }
-
-/* ─── Score display ─── */
-.trust-ring {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 3px solid var(--indigo);
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  font-size: 1.25rem;
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(10px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
-/* ─── Divider ─── */
-.divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+@keyframes pulseRing {
+  0%   { box-shadow: 0 0 0 0   rgb(79 70 229 / 0.35); }
+  70%  { box-shadow: 0 0 0 8px rgb(79 70 229 / 0);    }
+  100% { box-shadow: 0 0 0 0   rgb(79 70 229 / 0);    }
+}
 
-/* ─── Scrollbar ─── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--surface); }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
