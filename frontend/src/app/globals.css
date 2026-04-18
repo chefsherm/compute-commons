@@ -1,7 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   Compute Commons · Material Design 3 Global Stylesheet
-   Spec: https://m3.material.io/
-   Approach: M3 tonal palettes + surface tint elevation + state layers
+   Compute Commons · Global Stylesheet
+   Theme: Premium Enterprise SaaS — Material Design 3 × Stripe
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
@@ -12,740 +11,348 @@
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   1. M3 DESIGN TOKENS — CSS Custom Properties
-   Based on the Material Design 3 color roles specification.
+   1. CSS DESIGN TOKENS
    ═══════════════════════════════════════════════════════════════════════════ */
 :root {
-  /* ── Primary role ──────────────────────────────────────────────────────── */
-  --md-primary:              #4f46e5;   /* indigo-600 */
-  --md-on-primary:           #ffffff;
-  --md-primary-container:    #e0e7ff;   /* indigo-100 */
-  --md-on-primary-container: #1e1b4b;   /* indigo-950 */
+  /* Backgrounds */
+  --cc-bg:       #f8fafc;   /* slate-50  — app shell */
+  --cc-surface:  #ffffff;   /* white     — cards     */
+  --cc-surface-2:#f1f5f9;   /* slate-100 — hover/fill*/
 
-  /* ── Secondary role ────────────────────────────────────────────────────── */
-  --md-secondary:              #7c3aed; /* violet-600 */
-  --md-on-secondary:           #ffffff;
-  --md-secondary-container:    #ede9fe; /* violet-100 */
-  --md-on-secondary-container: #2e1065; /* violet-950 */
+  /* Borders */
+  --cc-border:   #e2e8f0;   /* slate-200 */
+  --cc-border-md:#cbd5e1;   /* slate-300 */
 
-  /* ── Tertiary role ─────────────────────────────────────────────────────── */
-  --md-tertiary:              #0284c7;  /* sky-600 */
-  --md-on-tertiary:           #ffffff;
-  --md-tertiary-container:    #e0f2fe;  /* sky-100 */
-  --md-on-tertiary-container: #0c4a6e;  /* sky-900 */
+  /* Text */
+  --cc-text:        #0f172a; /* slate-900 — primary heading */
+  --cc-text-body:   #475569; /* slate-600 — body / secondary */
+  --cc-text-muted:  #94a3b8; /* slate-400 — placeholder/hint */
 
-  /* ── Error role ────────────────────────────────────────────────────────── */
-  --md-error:              #b91c1c;     /* red-700 */
-  --md-on-error:           #ffffff;
-  --md-error-container:    #fee2e2;     /* red-100 */
-  --md-on-error-container: #7f1d1d;     /* red-900 */
+  /* Brand / Action */
+  --cc-brand:       #4f46e5; /* indigo-600 */
+  --cc-brand-hover: #4338ca; /* indigo-700 */
+  --cc-brand-light: #eef2ff; /* indigo-50  */
 
-  /* ── Semantic: Earned / Approved ───────────────────────────────────────── */
-  --md-earned:              #059669;    /* emerald-600 */
-  --md-on-earned:           #ffffff;
-  --md-earned-container:    #d1fae5;    /* emerald-100 */
-  --md-on-earned-container: #064e3b;    /* emerald-900 */
+  /* Semantic */
+  --cc-earned:  #059669; --cc-earned-light:  #ecfdf5;
+  --cc-staked:  #d97706; --cc-staked-light:  #fffbeb;
+  --cc-flagged: #e11d48; --cc-flagged-light: #fff1f2;
 
-  /* ── Semantic: Staked / Pending ────────────────────────────────────────── */
-  --md-staked:              #d97706;    /* amber-600 */
-  --md-on-staked:           #ffffff;
-  --md-staked-container:    #fef3c7;    /* amber-100 */
-  --md-on-staked-container: #78350f;    /* amber-900 */
+  /* Sidebar */
+  --sidebar-w: 240px;
 
-  /* ── Surface & Background ─────────────────────────────────────────────── */
-  /* M3 uses slightly tinted (warm/cool) surfaces derived from primary hue */
-  --md-surface:                  #f8f7ff;  /* App shell — violet-tinted cool white */
-  --md-surface-dim:              #dcd8f8;  /* Dimmed (behind modals) */
-  --md-surface-bright:           #ffffff;  /* Maximum brightness */
-  --md-surface-container-lowest: #ffffff;
-  --md-surface-container-low:    #f3f2fb;
-  --md-surface-container:        #eeedf5;
-  --md-surface-container-high:   #e8e7ef;
-  --md-surface-container-highest:#e2e1ea;
+  /* Radii */
+  --r-sm:   8px;
+  --r-md:   12px;
+  --r-lg:   16px;
+  --r-full: 9999px;
 
-  /* ── On-Surface (text) ────────────────────────────────────────────────── */
-  --md-on-surface:         #1c1b20;   /* Near-black — primary text */
-  --md-on-surface-variant: #47464f;   /* Medium gray — secondary text */
-  --md-inverse-surface:    #312f36;   /* Dark surface for snackbars */
-  --md-inverse-on-surface: #f4eff4;
-
-  /* ── Outline ──────────────────────────────────────────────────────────── */
-  --md-outline:         #787680;     /* Borders, dividers, unfocused inputs */
-  --md-outline-variant: #cac4d0;     /* Subtle dividers, inactive state */
-
-  /* ── Scrim ────────────────────────────────────────────────────────────── */
-  --md-scrim:           rgb(0 0 0 / 0.32);
-
-  /* ── Surface Tint (Primary-colored overlay per elevation level) ─────────
-     M3 tints surfaces with primary color at low opacity per elevation.
-     Level 0 = 0% | Level 1 = 5% | Level 2 = 8% | Level 3 = 11%
-     Level 4 = 12% | Level 5 = 14%                                         */
-  --md-surface-tint:    #4f46e5;
-  --md-tint-level-1:    rgb(79 70 229 / 0.05);
-  --md-tint-level-2:    rgb(79 70 229 / 0.08);
-  --md-tint-level-3:    rgb(79 70 229 / 0.11);
-  --md-tint-level-4:    rgb(79 70 229 / 0.12);
-  --md-tint-level-5:    rgb(79 70 229 / 0.14);
-
-  /* ── State Layer Opacities ────────────────────────────────────────────── */
-  /* M3 state layers are a color overlay at these opacities */
-  --md-state-hover:    0.08;    /* 8%  opacity on hover */
-  --md-state-focus:    0.12;    /* 12% opacity on focus */
-  --md-state-pressed:  0.12;    /* 12% opacity on pressed */
-  --md-state-dragged:  0.16;    /* 16% opacity on dragged */
-  --md-state-disabled: 0.38;    /* 38% opacity on disabled content */
-  --md-state-container-disabled: 0.12; /* 12% opacity on disabled container */
-
-  /* ── Elevation shadows ────────────────────────────────────────────────── */
-  --md-elev-1: 0 1px 2px 0 rgb(0 0 0 / 0.08), 0 1px 3px 1px rgb(0 0 0 / 0.06);
-  --md-elev-2: 0 1px 2px 0 rgb(0 0 0 / 0.10), 0 2px 6px 2px rgb(0 0 0 / 0.08);
-  --md-elev-3: 0 4px 8px 3px rgb(0 0 0 / 0.10), 0 1px 3px 0 rgb(0 0 0 / 0.10);
-
-  /* ── Motion ───────────────────────────────────────────────────────────── */
-  --md-motion-standard:   cubic-bezier(0.2, 0, 0, 1);
-  --md-motion-decelerate: cubic-bezier(0, 0, 0, 1);
-  --md-motion-accelerate: cubic-bezier(0.3, 0, 1, 1);
-  --md-duration-short:    200ms;
-  --md-duration-medium:   300ms;
+  /* Shadows */
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0/0.06), 0 1px 2px -1px rgb(0 0 0/0.04);
+  --shadow-md:   0 4px 12px -2px rgb(0 0 0/0.08), 0 2px 4px -2px rgb(0 0 0/0.05);
 }
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   2. BASE RESET
+   2. BASE
    ═══════════════════════════════════════════════════════════════════════════ */
 
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
-  font-size: 16px;
-  -webkit-text-size-adjust: 100%;
-  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background-color: var(--md-surface);
-  color: var(--md-on-surface);
-  font-family: 'Inter', 'Roboto', system-ui, -apple-system, sans-serif;
-  font-size: 1rem;       /* Body Large spec */
-  line-height: 1.5rem;   /* Body Large spec */
-  letter-spacing: 0.031em;
+  background-color: var(--cc-bg);
+  color: var(--cc-text-body);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 0.9375rem;
+  line-height: 1.6;
   min-height: 100vh;
 }
 
-/* M3 type scale applied to semantic HTML */
-h1 { font-size: 2.8125rem; line-height: 3.25rem; font-weight: 400;  letter-spacing: 0; color: var(--md-on-surface); }  /* Display Medium */
-h2 { font-size: 2rem;      line-height: 2.5rem;  font-weight: 400;  letter-spacing: 0; color: var(--md-on-surface); }  /* Headline Large */
-h3 { font-size: 1.5rem;    line-height: 2rem;    font-weight: 400;  letter-spacing: 0; color: var(--md-on-surface); }  /* Headline Small */
-h4 { font-size: 1.375rem;  line-height: 1.75rem; font-weight: 500;  letter-spacing: 0; color: var(--md-on-surface); }  /* Title Large */
-h5 { font-size: 1rem;      line-height: 1.5rem;  font-weight: 500;  letter-spacing: 0.009em; color: var(--md-on-surface); } /* Title Medium */
-h6 { font-size: 0.875rem;  line-height: 1.25rem; font-weight: 500;  letter-spacing: 0.006em; color: var(--md-on-surface); } /* Title Small */
-
-p  { color: var(--md-on-surface-variant); line-height: 1.5rem; }
-
-a {
-  color: var(--md-primary);
-  text-decoration: none;
-  transition: color var(--md-duration-short) var(--md-motion-standard);
+h1, h2, h3, h4, h5, h6 {
+  color: var(--cc-text);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
 }
-a:hover { color: #4338ca; } /* primary hover */
 
-/* M3-spec scrollbar */
-::-webkit-scrollbar       { width: 4px; height: 4px; }
-::-webkit-scrollbar-track { background: var(--md-surface-container-low); }
-::-webkit-scrollbar-thumb {
-  background: var(--md-outline-variant);
-  border-radius: 9999px;
-}
-::-webkit-scrollbar-thumb:hover { background: var(--md-outline); }
+h1 { font-size: 2.25rem; font-weight: 700; letter-spacing: -0.04em; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.125rem; }
+
+a { color: var(--cc-brand); text-decoration: none; }
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--cc-surface-2); }
+::-webkit-scrollbar-thumb { background: var(--cc-border-md); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--cc-text-muted); }
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   3. COMPONENT LAYER  — M3 Component Primitives
-   Naming: md-* prefix for Material components, cc-* for Compute Commons mods
+   3. COMPONENT LAYER
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @layer components {
 
-  /* ════════════════════════════════════════════════════════════════════════
-     3A. SURFACES & CARDS
-     M3 Surface Container levels control background tone.
-     Use tint overlay for elevation, not heavier shadows.
-     ════════════════════════════════════════════════════════════════════════ */
+  /* ── Cards ──────────────────────────────────────────────────────────────── */
 
-  /* Elevation 0 — flat, no tint */
-  .md-surface { background-color: var(--md-surface-container); }
-
-  /* Elevation 1 — standard card at rest */
-  .md-card {
-    background-color: var(--md-surface-container-low);
-    border-radius: 12px;  /* M3 Medium shape */
-    box-shadow: var(--md-elev-1);
-    overflow: hidden;
-    position: relative;
+  .cc-card {
+    @apply bg-white rounded-2xl border border-slate-200 p-6;
+    box-shadow: var(--shadow-card);
   }
 
-  /* Elevation 1 with tonal surface fill (for stat/hero cards) */
-  .md-card-tonal {
-    background-color: var(--md-surface-container-low);
-    border-radius: 12px;
-    box-shadow: var(--md-elev-1);
-    /* Apply primary tint */
-    background-image: linear-gradient(
-      135deg,
-      var(--md-tint-level-1),
-      transparent 60%
-    );
+  .cc-card-hover {
+    @apply transition-all duration-200;
+  }
+  .cc-card-hover:hover {
+    box-shadow: var(--shadow-md);
+    @apply border-indigo-200;
   }
 
-  /* Large, expressive card — Extra Large shape, Elevation 1 */
-  .md-card-xl {
-    background-color: var(--md-surface-container-lowest);
-    border-radius: 28px;  /* M3 Extra Large shape */
-    box-shadow: var(--md-elev-2);
-    overflow: hidden;
+  /* Stat / Hero card — accent top stripe */
+  .cc-card-hero {
+    @apply bg-white rounded-2xl border border-slate-200 p-8 relative overflow-hidden;
+    box-shadow: var(--shadow-card);
   }
-
-  /* State layer for interactive cards */
-  .md-card.interactive,
-  .md-card-interactive {
-    background-color: var(--md-surface-container-low);
-    border-radius: 12px;
-    box-shadow: var(--md-elev-1);
-    transition: box-shadow var(--md-duration-short) var(--md-motion-standard),
-                background-color var(--md-duration-short) var(--md-motion-standard);
-    cursor: pointer;
-    /* State layer via ::before pseudo-element */
-    position: relative;
-    overflow: hidden;
-  }
-  .md-card-interactive::before {
+  .cc-card-hero::before {
     content: '';
     position: absolute;
-    inset: 0;
-    background-color: var(--md-on-surface);
-    opacity: 0;
-    border-radius: inherit;
-    transition: opacity var(--md-duration-short) var(--md-motion-standard);
-    pointer-events: none;
-    z-index: 0;
-  }
-  .md-card-interactive:hover::before  { opacity: var(--md-state-hover); }
-  .md-card-interactive:focus::before  { opacity: var(--md-state-focus); }
-  .md-card-interactive:active::before { opacity: var(--md-state-pressed); }
-  .md-card-interactive:hover  { box-shadow: var(--md-elev-2); }
-  /* All children above the state layer */
-  .md-card-interactive > * { position: relative; z-index: 1; }
-
-
-  /* ════════════════════════════════════════════════════════════════════════
-     3B. BUTTONS — M3 Button component variants
-     Filled | Tonal | Outlined | Text | Elevated | FAB
-     All use rounded-full (pill) per M3 spec.
-     ════════════════════════════════════════════════════════════════════════ */
-
-  /* Base — shared geometry and typography */
-  .md-btn {
-    @apply inline-flex items-center justify-center gap-2
-           text-label-lg font-medium
-           rounded-full                /* M3 Full shape for buttons */
-           px-6 py-2.5                /* 24px / 10px — M3 spec */
-           select-none cursor-pointer
-           transition-all;
-    transition-duration: var(--md-duration-short);
-    transition-timing-function: var(--md-motion-standard);
-    /* State layer via pseudo */
-    position: relative;
-    overflow: hidden;
-    border: none;
-    outline: none;
-  }
-  .md-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    opacity: 0;
-    transition: opacity var(--md-duration-short) var(--md-motion-standard);
-    pointer-events: none;
-  }
-  .md-btn:disabled {
-    opacity: 0.38;
-    cursor: not-allowed;
-    pointer-events: none;
-  }
-  .md-btn > * { position: relative; z-index: 1; }
-
-  /*  Filled button — primary action */
-  .md-btn-filled {
-    @apply md-btn;
-    background-color: var(--md-primary);
-    color: var(--md-on-primary);
-    box-shadow: var(--md-elev-0);
-  }
-  .md-btn-filled::before { background-color: var(--md-on-primary); }
-  .md-btn-filled:hover  { box-shadow: var(--md-elev-1); }
-  .md-btn-filled:hover::before  { opacity: 0.08; }
-  .md-btn-filled:focus::before  { opacity: 0.12; }
-  .md-btn-filled:active::before { opacity: 0.12; }
-
-  /* Filled Tonal — secondary action, softer than filled */
-  .md-btn-tonal {
-    @apply md-btn;
-    background-color: var(--md-secondary-container);
-    color: var(--md-on-secondary-container);
-  }
-  .md-btn-tonal::before { background-color: var(--md-on-secondary-container); }
-  .md-btn-tonal:hover  { box-shadow: var(--md-elev-1); }
-  .md-btn-tonal:hover::before  { opacity: 0.08; }
-  .md-btn-tonal:focus::before  { opacity: 0.12; }
-  .md-btn-tonal:active::before { opacity: 0.12; }
-
-  /* Elevated — above-surface accent, adds shadow at rest */
-  .md-btn-elevated {
-    @apply md-btn;
-    background-color: var(--md-surface-container-low);
-    color: var(--md-primary);
-    box-shadow: var(--md-elev-1);
-  }
-  .md-btn-elevated::before { background-color: var(--md-primary); }
-  .md-btn-elevated:hover  { box-shadow: var(--md-elev-2); }
-  .md-btn-elevated:hover::before  { opacity: 0.08; }
-  .md-btn-elevated:focus::before  { opacity: 0.12; }
-
-  /* Outlined — lower-emphasis action */
-  .md-btn-outlined {
-    @apply md-btn;
-    background-color: transparent;
-    color: var(--md-primary);
-    border: 1px solid var(--md-outline);
-  }
-  .md-btn-outlined::before { background-color: var(--md-primary); }
-  .md-btn-outlined:hover::before  { opacity: 0.08; }
-  .md-btn-outlined:focus { border-color: var(--md-primary); }
-  .md-btn-outlined:focus::before  { opacity: 0.12; }
-
-  /* Text — least emphasis */
-  .md-btn-text {
-    @apply md-btn px-3;
-    background-color: transparent;
-    color: var(--md-primary);
-  }
-  .md-btn-text::before { background-color: var(--md-primary); }
-  .md-btn-text:hover::before { opacity: 0.08; }
-
-  /* Destructive (Error role) */
-  .md-btn-error {
-    @apply md-btn;
-    background-color: var(--md-error);
-    color: var(--md-on-error);
-  }
-  .md-btn-error::before { background-color: var(--md-on-error); }
-  .md-btn-error:hover  { box-shadow: var(--md-elev-1); }
-  .md-btn-error:hover::before { opacity: 0.08; }
-
-  /* Icon button */
-  .md-btn-icon {
-    @apply md-btn p-2.5;
-    background-color: transparent;
-    color: var(--md-on-surface-variant);
-    border-radius: 50%;
-  }
-  .md-btn-icon::before { background-color: var(--md-on-surface); border-radius: 50%; }
-  .md-btn-icon:hover::before { opacity: 0.08; }
-
-
-  /* ════════════════════════════════════════════════════════════════════════
-     3C. BADGES / CHIPS — M3 Chip + custom Compute Commons tier badges
-     M3 Chips use Small shape (8px radius), Assist/Filter/Input/Suggestion
-     ════════════════════════════════════════════════════════════════════════ */
-
-  /* M3 Chip base */
-  .md-chip {
-    @apply inline-flex items-center gap-1.5 text-label-md font-medium
-           rounded-sm                    /* M3 Small shape = 8px */
-           px-3 py-1.5
-           border border-outline-variant
-           cursor-pointer select-none;
-    background-color: var(--md-surface-container-low);
-    color: var(--md-on-surface-variant);
-    transition: all var(--md-duration-short) var(--md-motion-standard);
-    position: relative;
-    overflow: hidden;
-  }
-  .md-chip::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-color: var(--md-on-surface);
-    opacity: 0;
-    border-radius: inherit;
-    pointer-events: none;
-  }
-  .md-chip:hover::before  { opacity: 0.08; }
-  .md-chip:active::before { opacity: 0.12; }
-  .md-chip.selected {
-    background-color: var(--md-secondary-container);
-    color: var(--md-on-secondary-container);
-    border-color: transparent;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    border-radius: 1rem 1rem 0 0;
   }
 
-  /* Compute Commons Tier Badges (full pill — emphasis on identity) */
+
+  /* ── Buttons — all rounded-full (pill) ──────────────────────────────────── */
+
+  .cc-btn {
+    @apply inline-flex items-center gap-2 font-medium text-sm
+           rounded-full px-5 py-2.5
+           transition-all duration-200 cursor-pointer select-none
+           border whitespace-nowrap;
+    box-shadow: var(--shadow-card);
+  }
+  .cc-btn:disabled { @apply opacity-40 cursor-not-allowed; }
+
+  .cc-btn-primary {
+    @apply cc-btn bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700 hover:border-indigo-700;
+  }
+
+  .cc-btn-secondary {
+    @apply cc-btn bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:border-slate-400;
+  }
+
+  .cc-btn-ghost {
+    @apply cc-btn bg-transparent border-transparent text-indigo-600 shadow-none
+           hover:bg-indigo-50;
+  }
+
+  .cc-btn-danger {
+    @apply cc-btn bg-white text-rose-600 border-rose-300 hover:bg-rose-50;
+  }
+
+  .cc-btn-icon {
+    @apply inline-flex items-center justify-center w-9 h-9 rounded-full
+           bg-white border border-slate-200 text-slate-500
+           hover:bg-slate-50 hover:text-slate-700
+           transition-all duration-200 cursor-pointer;
+    box-shadow: var(--shadow-card);
+  }
+
+
+  /* ── Badges / Pills ─────────────────────────────────────────────────────── */
+
   .cc-badge {
-    @apply inline-flex items-center gap-1 text-label-sm font-medium
-           rounded-full px-2.5 py-0.5;
+    @apply inline-flex items-center gap-1 text-xs font-bold
+           rounded-full px-3 py-1;
   }
-  .cc-badge-contributor { background-color: #f1f5f9; color: #475569; }           /* slate */
-  .cc-badge-validator   { background-color: var(--md-primary-container);   color: var(--md-on-primary-container); }
-  .cc-badge-expert      { background-color: var(--md-staked-container);    color: var(--md-on-staked-container); }
-  .cc-badge-partner     { background-color: var(--md-secondary-container); color: var(--md-on-secondary-container); }
 
-  /* Status chips */
+  .cc-badge-brand       { @apply cc-badge bg-indigo-50   text-indigo-700; }
+  .cc-badge-contributor { @apply cc-badge bg-slate-100   text-slate-600; }
+  .cc-badge-validator   { @apply cc-badge bg-indigo-50   text-indigo-700; }
+  .cc-badge-expert      { @apply cc-badge bg-amber-50    text-amber-700; }
+  .cc-badge-partner     { @apply cc-badge bg-violet-50   text-violet-700; }
+
   .cc-status {
-    @apply inline-flex items-center gap-1.5 text-label-md font-medium
-           rounded-full px-2.5 py-1;
+    @apply inline-flex items-center gap-1.5 text-xs font-medium
+           rounded-full px-3 py-1;
   }
-  .cc-status-pending    { background-color: var(--md-staked-container);  color: var(--md-on-staked-container); }
-  .cc-status-validating { background-color: var(--md-primary-container); color: var(--md-on-primary-container); }
-  .cc-status-complete   { background-color: var(--md-earned-container);  color: var(--md-on-earned-container); }
-  .cc-status-flagged    { background-color: var(--md-error-container);   color: var(--md-on-error-container); }
-  .cc-status-rejected   { background-color: var(--md-error-container);   color: var(--md-on-error-container); }
-  .cc-status-on_hold    { background-color: var(--md-surface-container-high); color: var(--md-on-surface-variant); }
+  .cc-status-live       { @apply cc-status bg-emerald-50  text-emerald-700 border border-emerald-200; }
+  .cc-status-pending    { @apply cc-status bg-amber-50    text-amber-700   border border-amber-200; }
+  .cc-status-complete   { @apply cc-status bg-emerald-50  text-emerald-700 border border-emerald-200; }
+  .cc-status-validating { @apply cc-status bg-indigo-50   text-indigo-700  border border-indigo-200; }
+  .cc-status-flagged    { @apply cc-status bg-rose-50     text-rose-700    border border-rose-200; }
+  .cc-status-rejected   { @apply cc-status bg-red-50      text-red-700     border border-red-200; }
+  .cc-status-neutral    { @apply cc-status bg-slate-100   text-slate-600   border border-slate-200; }
 
-  /* Domain / taxonomy tags */
   .cc-tag {
-    @apply inline-flex items-center text-label-sm
-           rounded-xs px-2 py-0.5;
-    background-color: var(--md-surface-container-high);
-    color: var(--md-on-surface-variant);
-    border: 1px solid var(--md-outline-variant);
+    @apply inline-flex items-center text-xs font-medium text-slate-600
+           bg-slate-100 border border-slate-200 rounded-full px-2.5 py-0.5;
   }
 
 
-  /* ════════════════════════════════════════════════════════════════════════
-     3D. TEXT FIELDS — M3 Filled and Outlined variants
-     ════════════════════════════════════════════════════════════════════════ */
+  /* ── Sidebar / Navigation ───────────────────────────────────────────────── */
 
-  /* Filled text field — flat bottom border, colored bg */
-  .md-input-filled {
-    background-color: var(--md-surface-container-high);
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    border-radius: 4px 4px 0 0;
-    border: none;
-    border-bottom: 2px solid var(--md-outline);
-    padding: 1rem 1rem 0.5rem;
-    font-size: 1rem;            /* Body Large */
-    line-height: 1.5rem;
-    letter-spacing: 0.031em;
-    color: var(--md-on-surface);
-    width: 100%;
-    outline: none;
-    transition: border-color var(--md-duration-short) var(--md-motion-standard);
-    font-family: inherit;
-  }
-  .md-input-filled::placeholder { color: var(--md-on-surface-variant); }
-  .md-input-filled:focus {
-    border-bottom-color: var(--md-primary);
-    border-bottom-width: 2px;
+  .cc-sidebar {
+    @apply fixed top-0 left-0 h-screen bg-white border-r border-slate-200
+           flex flex-col z-50;
+    width: var(--sidebar-w);
+    box-shadow: 1px 0 0 0 #e2e8f0;
   }
 
-  /* Outlined text field — full border, transparent bg */
-  .md-input-outlined {
-    background-color: transparent;
-    border-radius: 4px;         /* M3 Extra Small shape */
-    border: 1px solid var(--md-outline);
-    padding: 0.875rem 1rem;
-    font-size: 1rem;
-    line-height: 1.5rem;
-    letter-spacing: 0.031em;
-    color: var(--md-on-surface);
-    width: 100%;
-    outline: none;
-    transition: border-color var(--md-duration-short) var(--md-motion-standard),
-                border-width  var(--md-duration-short) var(--md-motion-standard);
-    font-family: inherit;
-  }
-  .md-input-outlined::placeholder { color: var(--md-on-surface-variant); }
-  .md-input-outlined:hover  { border-color: var(--md-on-surface); }
-  .md-input-outlined:focus  { border-color: var(--md-primary); border-width: 2px; }
-
-  /* Common label */
-  .md-label {
-    display: block;
-    font-size: 0.75rem;       /* Label Medium */
-    font-weight: 500;
-    letter-spacing: 0.031em;
-    color: var(--md-on-surface-variant);
-    margin-bottom: 0.25rem;
-  }
-  .md-input-outlined:focus + .md-label,
-  .md-input-filled:focus + .md-label {
-    color: var(--md-primary);
+  .cc-sidebar-logo {
+    @apply flex items-center gap-3 px-5 py-5 border-b border-slate-100;
   }
 
-  /* Simple Compute Commons input (short notation) */
+  .cc-sidebar-logo-icon {
+    @apply w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center
+           flex-shrink-0;
+    box-shadow: 0 2px 8px rgb(79 70 229 / 0.3);
+  }
+
+  .cc-nav-section-label {
+    @apply text-[10px] font-semibold text-slate-400 uppercase tracking-widest
+           px-3 mb-1;
+  }
+
+  .cc-nav-link {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
+           text-slate-600 transition-all duration-150 no-underline mx-1;
+  }
+  .cc-nav-link:hover {
+    @apply bg-slate-50 text-slate-800;
+  }
+  .cc-nav-link.active {
+    @apply bg-indigo-50 text-indigo-700;
+  }
+  .cc-nav-link .nav-icon {
+    @apply w-5 h-5 flex-shrink-0;
+  }
+
+
+  /* ── Inputs ─────────────────────────────────────────────────────────────── */
+
   .cc-input {
-    @apply md-input-outlined;
-    border-radius: 8px;  /* Small shape — slightly more rounded for our UI */
+    @apply w-full bg-white border border-slate-300 rounded-lg text-sm
+           text-slate-800 placeholder-slate-400 px-3.5 py-2.5 outline-none
+           transition-all duration-150;
   }
-  .cc-input:focus { box-shadow: 0 0 0 2px rgb(79 70 229 / 0.2); }
+  .cc-input:focus {
+    @apply border-indigo-500;
+    box-shadow: 0 0 0 3px rgb(79 70 229 / 0.15);
+  }
+  .cc-input:hover:not(:focus) { @apply border-slate-400; }
 
   .cc-select { @apply cc-input appearance-none cursor-pointer; }
 
-
-  /* ════════════════════════════════════════════════════════════════════════
-     3E. DATA TABLES — M3 approach: no vertical lines, row state layers
-     ════════════════════════════════════════════════════════════════════════ */
-
-  .md-table {
-    @apply w-full;
-    border-collapse: collapse;
+  .cc-label {
+    @apply block text-xs font-semibold text-slate-600 mb-1.5;
   }
-  .md-table thead {
-    border-bottom: 1px solid var(--md-outline-variant);
-  }
-  .md-table th {
-    text-align: left;
-    padding: 0.75rem 1rem;      /* 12px 16px */
-    font-size: 0.75rem;         /* Label Medium */
-    font-weight: 500;
-    letter-spacing: 0.031em;
-    color: var(--md-on-surface-variant);
-    text-transform: uppercase;
-    background-color: var(--md-surface-container-low);
-  }
-  .md-table td {
-    padding: 0.875rem 1rem;    /* 14px 16px */
-    font-size: 0.875rem;        /* Body Medium */
-    color: var(--md-on-surface);
-    border-bottom: 1px solid var(--md-outline-variant);
-    vertical-align: middle;
-  }
-  .md-table tbody tr {
-    position: relative;
-    transition: background-color var(--md-duration-short) var(--md-motion-standard);
-  }
-  .md-table tbody tr::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-color: var(--md-on-surface);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity var(--md-duration-short) var(--md-motion-standard);
-  }
-  .md-table tbody tr:hover::after { opacity: 0.08; }
-  .md-table tbody tr:last-child td { border-bottom: none; }
 
 
-  /* ════════════════════════════════════════════════════════════════════════
-     3F. NAVIGATION — M3 Navigation Drawer / Navigation Rail
-     ════════════════════════════════════════════════════════════════════════ */
+  /* ── Data Tables ─────────────────────────────────────────────────────────── */
 
-  .md-nav-item {
-    @apply flex items-center gap-3 rounded-full
-           text-label-lg font-medium
-           px-4 py-3.5
-           cursor-pointer select-none no-underline;
-    color: var(--md-on-surface-variant);
-    position: relative;
-    overflow: hidden;
-    transition: color var(--md-duration-short) var(--md-motion-standard);
+  .cc-table { @apply w-full text-sm; border-collapse: collapse; }
+  .cc-table th {
+    @apply text-left text-[11px] font-semibold text-slate-400 uppercase
+           tracking-widest px-4 py-3 bg-slate-50 border-b border-slate-200;
   }
-  .md-nav-item::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    opacity: 0;
-    background-color: var(--md-on-surface);
-    transition: opacity var(--md-duration-short) var(--md-motion-standard);
-    pointer-events: none;
+  .cc-table td {
+    @apply px-4 py-3.5 border-b border-slate-100 text-slate-700 align-middle;
   }
-  .md-nav-item:hover::before { opacity: 0.08; }
-  .md-nav-item.active {
-    background-color: var(--md-secondary-container);
-    color: var(--md-on-secondary-container);
-    font-weight: 600;
-  }
-  .md-nav-item.active::before { background-color: var(--md-on-secondary-container); }
+  .cc-table tbody tr { @apply transition-colors duration-100; }
+  .cc-table tbody tr:hover td { @apply bg-slate-50/70; }
+  .cc-table tbody tr:last-child td { @apply border-b-0; }
 
 
-  /* ════════════════════════════════════════════════════════════════════════
-     3G. NUMERIC DISPLAYS — for credits, scores, stats
-     ════════════════════════════════════════════════════════════════════════ */
+  /* ── Numeric displays ────────────────────────────────────────────────────── */
 
   .cc-num-xl {
-    font-family: 'JetBrains Mono', 'Roboto Mono', ui-monospace, monospace;
-    font-size: 3.5625rem;  /* Display Large */
-    font-weight: 700;
-    letter-spacing: -0.016em;
-    color: var(--md-on-surface);
-    line-height: 4rem;
-    font-variant-numeric: tabular-nums;
+    @apply font-mono text-4xl font-bold tabular-nums;
+    color: var(--cc-text);
+    letter-spacing: -0.04em;
   }
-  .cc-num-lg {
-    font-family: 'JetBrains Mono', 'Roboto Mono', ui-monospace, monospace;
-    font-size: 2.25rem;    /* Display Small */
-    font-weight: 700;
-    letter-spacing: 0;
-    color: var(--md-on-surface);
-    font-variant-numeric: tabular-nums;
-  }
-  .cc-num-md {
-    font-family: 'JetBrains Mono', 'Roboto Mono', ui-monospace, monospace;
-    font-size: 1.375rem;   /* Title Large */
-    font-weight: 600;
-    letter-spacing: 0;
-    font-variant-numeric: tabular-nums;
-  }
-
-  /* Colour modifiers */
-  .cc-num-primary  { color: var(--md-primary); }
-  .cc-num-earned   { color: var(--md-earned); }
-  .cc-num-staked   { color: var(--md-staked); }
-  .cc-num-error    { color: var(--md-error); }
+  .cc-num-lg  { @apply font-mono text-2xl font-bold tabular-nums; color: var(--cc-text); }
+  .cc-num-md  { @apply font-mono text-lg  font-semibold tabular-nums; }
+  .cc-num-earned  { color: var(--cc-earned);  }
+  .cc-num-staked  { color: var(--cc-staked);  }
+  .cc-num-flagged { color: var(--cc-flagged); }
+  .cc-num-brand   { color: var(--cc-brand);   }
 
 
-  /* ════════════════════════════════════════════════════════════════════════
-     3H. PROGRESS INDICATORS — M3 Linear and Circular
-     ════════════════════════════════════════════════════════════════════════ */
+  /* ── Progress bars ───────────────────────────────────────────────────────── */
 
-  .md-progress-track {
-    height: 4px;
-    width: 100%;
-    background-color: var(--md-primary-container);
-    border-radius: 9999px;
-    overflow: hidden;
-    position: relative;
+  .cc-progress { @apply w-full h-1.5 bg-slate-100 rounded-full overflow-hidden; }
+  .cc-progress-fill {
+    @apply h-full rounded-full transition-all duration-500;
+    background: linear-gradient(90deg, #4f46e5, #7c3aed);
   }
-  .md-progress-fill {
-    height: 100%;
-    background-color: var(--md-primary);
-    border-radius: 9999px;
-    transition: width 500ms var(--md-motion-standard);
-  }
-  .md-progress-fill.earned  { background-color: var(--md-earned); }
-  .md-progress-fill.staked  { background-color: var(--md-staked); }
-  .md-progress-fill.error   { background-color: var(--md-error); }
-  .md-progress-indeterminate .md-progress-fill {
-    animation: progressIndeterminate 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
-    width: 35%;
-    position: absolute;
-    left: -35%;
-  }
+  .cc-progress-fill.earned  { background: var(--cc-earned); }
+  .cc-progress-fill.staked  { background: var(--cc-staked); }
+  .cc-progress-fill.flagged { background: var(--cc-flagged); }
 
 
-  /* ════════════════════════════════════════════════════════════════════════
-     3I. SCORE / TRUST RING
-     ════════════════════════════════════════════════════════════════════════ */
+  /* ── Score ring ──────────────────────────────────────────────────────────── */
 
   .cc-score-ring {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    border: 3px solid var(--md-primary);
-    background-color: var(--md-surface-container-low);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    font-size: 1.25rem;
-    color: var(--md-primary);
-    font-variant-numeric: tabular-nums;
-  }
-  .cc-score-ring.earned {
-    border-color: var(--md-earned);
-    color: var(--md-earned);
+    @apply w-20 h-20 rounded-full border-2 border-indigo-200 bg-indigo-50
+           flex items-center justify-center font-mono font-bold text-xl text-indigo-700
+           tabular-nums;
   }
 
 
-  /* ════════════════════════════════════════════════════════════════════════
-     3J. SKELETON LOADERS
-     ════════════════════════════════════════════════════════════════════════ */
-
-  .md-skeleton {
-    background: linear-gradient(
-      90deg,
-      var(--md-surface-container-high)    25%,
-      var(--md-surface-container-highest) 50%,
-      var(--md-surface-container-high)    75%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 1.6s linear infinite;
-    border-radius: 4px;
-  }
-
-
-  /* ════════════════════════════════════════════════════════════════════════
-     3K. DIVIDERS
-     M3 dividers use outline-variant (very soft)
-     ════════════════════════════════════════════════════════════════════════ */
-
-  .md-divider {
-    width: 100%;
-    height: 1px;
-    background-color: var(--md-outline-variant);
-    border: none;
-    margin: 1rem 0;
-  }
-  .md-divider-inset {
-    @apply md-divider ml-16;  /* Inset divider — M3 variant */
-  }
-
-
-  /* ════════════════════════════════════════════════════════════════════════
-     3L. CODE / RAW PAYLOAD BLOCKS (Partner Workspace)
-     ════════════════════════════════════════════════════════════════════════ */
-
-  .cc-code-block {
-    font-family: 'JetBrains Mono', 'Roboto Mono', ui-monospace, monospace;
-    font-size: 0.8125rem;   /* slightly smaller for density */
-    line-height: 1.5rem;
-    color: var(--md-on-surface);
-    background-color: var(--md-surface-container);
-    border-radius: 12px;    /* Medium shape */
-    padding: 1rem;
-    overflow: auto;
-    border: 1px solid var(--md-outline-variant);
-  }
-
-  :not(pre) > code, kbd {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 0.85em;
-    background-color: var(--md-surface-container-highest);
-    color: var(--md-on-surface);
-    border-radius: 4px;
-    padding: 0.125rem 0.375rem;
-  }
-
-
-  /* ════════════════════════════════════════════════════════════════════════
-     3M. SECTION LABELS
-     ════════════════════════════════════════════════════════════════════════ */
+  /* ── Section labels ──────────────────────────────────────────────────────── */
 
   .cc-section-label {
-    font-size: 0.6875rem;   /* Label Small */
-    font-weight: 500;
-    letter-spacing: 0.031em;
-    text-transform: uppercase;
-    color: var(--md-on-surface-variant);
+    @apply text-[11px] font-semibold text-slate-400 uppercase tracking-widest;
   }
 
 
-  /* ════════════════════════════════════════════════════════════════════════
-     3N. SCRIM / MODAL OVERLAY
-     ════════════════════════════════════════════════════════════════════════ */
+  /* ── Dividers ────────────────────────────────────────────────────────────── */
 
-  .md-scrim {
-    position: fixed;
-    inset: 0;
-    background-color: var(--md-scrim);
-    z-index: 40;
-    animation: scaleIn 200ms var(--md-motion-standard) both;
+  .cc-divider { @apply border-none border-t border-slate-200 my-6; display: block; height: 1px; background: var(--cc-border); }
+
+
+  /* ── Skeleton loaders ────────────────────────────────────────────────────── */
+
+  .cc-skeleton {
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s linear infinite;
+    border-radius: 6px;
+  }
+
+
+  /* ── Code / monospace evidence blocks ────────────────────────────────────── */
+
+  .cc-code-block {
+    @apply font-mono text-sm text-slate-700 bg-slate-50 border border-slate-200
+           rounded-xl p-4 overflow-auto leading-relaxed;
+  }
+
+
+  /* ── Page shell ──────────────────────────────────────────────────────────── */
+
+  .cc-page {
+    @apply px-8 py-8 max-w-7xl;
+  }
+
+  .cc-page-header {
+    @apply mb-8;
+  }
+
+  .cc-page-title {
+    @apply text-2xl font-bold text-slate-900 tracking-tight mb-1;
+  }
+
+  .cc-page-subtitle {
+    @apply text-sm text-slate-500;
   }
 }
 
@@ -755,8 +362,6 @@ a:hover { color: #4338ca; } /* primary hover */
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @layer utilities {
-
-  /* Stagger delays for list entrance animations */
   .stagger-1 { animation-delay: 50ms;  }
   .stagger-2 { animation-delay: 100ms; }
   .stagger-3 { animation-delay: 150ms; }
@@ -764,59 +369,18 @@ a:hover { color: #4338ca; } /* primary hover */
   .stagger-5 { animation-delay: 250ms; }
   .stagger-6 { animation-delay: 300ms; }
 
-  /* M3 state layer helpers (applied directly when pseudo isn't available) */
-  .state-hover-on-surface   { background-color: rgb(28 27 32 / 0.08); }
-  .state-hover-on-primary   { background-color: rgb(255 255 255 / 0.08); }
-  .state-focus-on-surface   { background-color: rgb(28 27 32 / 0.12); }
-  .state-pressed-on-surface { background-color: rgb(28 27 32 / 0.12); }
-
-  /* Tabular numerics */
   .tabular-nums { font-variant-numeric: tabular-nums; }
-
-  /* M3 Emphasis levels (via opacity) */
-  .emphasis-high   { opacity: 1; }        /* primary content */
-  .emphasis-medium { opacity: 0.74; }     /* secondary content */
-  .emphasis-low    { opacity: 0.38; }     /* disabled / hint */
-
-  /* Text balance */
   .text-balance { text-wrap: balance; }
+
+  /* Live pulse dot */
+  .dot-live  { @apply w-2 h-2 rounded-full bg-emerald-500 animate-pulse; }
+  .dot-stale { @apply w-2 h-2 rounded-full bg-amber-400; }
+  .dot-off   { @apply w-2 h-2 rounded-full bg-slate-300; }
 }
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   5. SURFACE CONTEXTS — data-surface attribute overrides per page
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-/* Contributor Dashboard — earned/reward forward */
-[data-surface='contributor'] {
-  --md-primary:           #059669;   /* emerald — reward-forward */
-  --md-on-primary:        #ffffff;
-  --md-primary-container: #d1fae5;   /* emerald-100 */
-  --md-on-primary-container: #064e3b;
-  --md-surface-tint:      #059669;
-  --md-tint-level-1:      rgb(5 150 105 / 0.05);
-  --md-tint-level-2:      rgb(5 150 105 / 0.08);
-}
-
-/* Partner Workspace — density, indigo */
-[data-surface='partner'] {
-  --md-surface: #f3f2fb;               /* Slightly darker shell for density */
-  font-size: 0.875rem;                 /* Body Medium default — denser */
-  line-height: 1.25rem;
-  letter-spacing: 0.016em;
-}
-
-/* Public Profile — authority, spacious */
-[data-surface='profile'] {
-  --md-surface: #ffffff;
-  font-size: 1.0625rem;               /* Slightly larger for readability */
-  line-height: 1.75rem;
-  letter-spacing: 0.016em;
-}
-
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   6. ANIMATIONS  (keyframes also in tailwind.config.js for Tailwind classes)
+   5. ANIMATIONS
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @keyframes shimmer {
@@ -824,23 +388,17 @@ a:hover { color: #4338ca; } /* primary hover */
   to   { background-position:  200% 0; }
 }
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes scaleIn {
-  from { opacity: 0; transform: scale(0.92); }
+  from { opacity: 0; transform: scale(0.96); }
   to   { opacity: 1; transform: scale(1); }
 }
-@keyframes slideInRight {
-  from { opacity: 0; transform: translateX(20px); }
-  to   { opacity: 1; transform: translateX(0); }
+@keyframes pulseGlow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
-@keyframes ripple {
-  from { transform: scale(0); opacity: 0.24; }
-  to   { transform: scale(2); opacity: 0; }
-}
-@keyframes progressIndeterminate {
-  0%   { left: '-35%';  right: '100%'; }
-  60%  { left: '100%';  right: '-90%'; }
-  100% { left: '100%';  right: '-90%'; }
-}
+
+.animate-fade-in-up { animation: fadeInUp 0.35s cubic-bezier(0.2, 0, 0, 1) both; }
+.animate-scale-in   { animation: scaleIn 0.2s cubic-bezier(0.2, 0, 0, 1) both; }

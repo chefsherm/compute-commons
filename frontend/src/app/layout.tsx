@@ -1,6 +1,16 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import Link from 'next/link'
+import {
+  LayoutDashboard,
+  ShieldCheck,
+  Scale,
+  Award,
+  Trophy,
+  Terminal,
+  ChevronRight,
+  Briefcase,
+} from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Compute Commons — Earn your seat at the frontier.',
@@ -8,76 +18,67 @@ export const metadata: Metadata = {
 }
 
 const NAV_LINKS = [
-  { href: '/', label: 'Home', icon: '⬡' },
-  { href: '/dashboard/contributor', label: 'Contributor', icon: '◈' },
-  { href: '/dashboard/validator', label: 'Validator', icon: '⧖' },
-  { href: '/dashboard/governance', label: 'Governance', icon: '⚖' },
-  { href: '/dashboard/trust', label: 'Trust', icon: '◎' },
-  { href: '/leaderboard', label: 'Leaderboard', icon: '⬙' },
+  { href: '/',                        label: 'Home',                icon: LayoutDashboard },
+  { href: '/dashboard/contributor',   label: 'Contributor',         icon: Award           },
+  { href: '/dashboard/validator',     label: 'Validator',           icon: ShieldCheck     },
+  { href: '/dashboard/governance',    label: 'Governance',          icon: Scale           },
+  { href: '/dashboard/trust',         label: 'Trust',               icon: ShieldCheck     },
+  { href: '/leaderboard',             label: 'Leaderboard',         icon: Trophy          },
+  { href: '/partner/workspace',       label: 'Partner Workspace',   icon: Briefcase       },
 ]
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <div style={{ display: 'flex', minHeight: '100vh' }}>
-          {/* Sidebar */}
-          <aside style={{
-            width: '220px',
-            background: 'var(--surface)',
-            borderRight: '1px solid var(--border)',
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '0',
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            height: '100vh',
-            zIndex: 100,
-          }}>
+        <div className="flex min-h-screen bg-slate-50">
+
+          {/* ── Sidebar ──────────────────────────────────────────────────── */}
+          <aside className="cc-sidebar">
+
             {/* Logo */}
-            <div style={{ padding: '20px 20px 16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <div style={{
-                  width: '32px', height: '32px', borderRadius: '8px',
-                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '16px', boxShadow: '0 4px 12px rgba(99,102,241,0.4)',
-                }}>⬡</div>
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: '0.9rem', lineHeight: '1.1' }}>Compute</div>
-                  <div style={{ fontWeight: 700, fontSize: '0.9rem', color: '#818cf8', lineHeight: '1.1' }}>Commons</div>
+            <div className="cc-sidebar-logo">
+              <div className="cc-sidebar-logo-icon">
+                <Terminal className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <div className="font-bold text-sm text-slate-900 leading-tight tracking-tight">
+                  Compute
+                </div>
+                <div className="font-bold text-sm text-indigo-600 leading-tight tracking-tight">
+                  Commons
                 </div>
               </div>
-              <div style={{ marginTop: '6px', fontSize: '0.62rem', color: 'var(--text-muted)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                Phase 2
-              </div>
+              <span className="ml-auto text-[9px] font-semibold text-slate-300 uppercase tracking-widest border border-slate-200 rounded px-1.5 py-0.5">
+                v2
+              </span>
             </div>
 
-            <div style={{ width: 'calc(100% - 32px)', margin: '0 16px', borderTop: '1px solid var(--border)' }} />
-
-            {/* Nav links */}
-            <nav style={{ padding: '12px 12px', flex: 1, display: 'flex', flexDirection: 'column', gap: '2px' }}>
-              <div className="section-label" style={{ paddingLeft: '8px', marginBottom: '8px' }}>Navigation</div>
-              {NAV_LINKS.map(link => (
-                <Link key={link.href} href={link.href} className="nav-link">
-                  <span style={{ fontSize: '1rem', lineHeight: 1 }}>{link.icon}</span>
-                  {link.label}
+            {/* Navigation */}
+            <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
+              <div className="cc-nav-section-label px-3 py-2">Navigation</div>
+              {NAV_LINKS.map(({ href, label, icon: Icon }) => (
+                <Link key={href} href={href} className="cc-nav-link">
+                  <Icon className="nav-icon" />
+                  <span>{label}</span>
                 </Link>
               ))}
             </nav>
 
-            {/* Bottom legal notice */}
-            <div style={{ padding: '12px 16px', borderTop: '1px solid var(--border)' }}>
-              <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', lineHeight: '1.4' }}>
-                Credits have no cash value. Compute access only.<br />
-                Non-transferable. Not investments.
-              </div>
+            {/* Legal footer */}
+            <div className="px-5 py-4 border-t border-slate-100">
+              <p className="text-[10px] text-slate-400 leading-relaxed">
+                Credits have no cash value.<br />
+                Compute access only. Non-transferable.
+              </p>
             </div>
           </aside>
 
-          {/* Main content */}
-          <main style={{ marginLeft: '220px', flex: 1, minHeight: '100vh' }}>
+          {/* ── Main content ─────────────────────────────────────────────── */}
+          <main
+            className="flex-1 min-h-screen overflow-y-auto"
+            style={{ marginLeft: 'var(--sidebar-w)' }}
+          >
             {children}
           </main>
         </div>
